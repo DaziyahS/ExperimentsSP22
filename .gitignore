@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+# Build
+[Bb]uild*
+[Bb]in/
