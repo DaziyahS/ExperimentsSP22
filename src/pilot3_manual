@@ -110,8 +110,9 @@ midScreen()
     if (ImGui::Button("Next Screen",buttonSize))
     {
         screen_name = trial_screen;
-        exp_num++;
-        trial_num = 0;
+        exp_num++; // go to new experiment number
+        trial_num = 1; // reset the trial number
+        file_name << "This is now experiment " << exp_num << std::endl; // create a line to distinguish the experiments
     }
 }
 
