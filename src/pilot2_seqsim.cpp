@@ -26,12 +26,16 @@ int windowHeight = 1000;
 std::string my_title= "Play GUI";
 ImVec2 buttonSize = ImVec2(400, 65);  // Size of buttons on GUI
 // std::string deviceNdx = "Speakers (USB Sound Device)"; // Put my device name or number, is for at home name
-int deviceNdx = 5;
+int deviceNdx = 6;
 // tactors of interest
 int topTact = 4;
 int botTact = 6;
 int leftTact = 0;
 int rightTact = 2;
+
+// trying to figure out how to save to an excel document
+std::string saveSubject; // experiment details, allows me to customize
+std::ofstream file_name; // this holds the trial information
 
 
 class MyGui : public Application
@@ -51,6 +55,11 @@ public:
         // something the GUI needs *shrugs*
         ImGui::GetIO().ConfigFlags &= ~ImGuiConfigFlags_ViewportsEnable;
         set_background(Cyans::Teal); //background_color = Grays::Black; 
+
+         // trying to figure out how to save to an excel document
+        file_name.open("../../Data/" + saveSubject + "_piloting.csv"); // saves the csv name for all parameters
+        file_name << "Trial" << "," << "Chord" << "," << "Sus" << "," << "Amp" << "," << "IsSim" << "," << "IsMajor" << ","
+                  << "Valence" << "," << "Arousal" << "," << "Notes" << std::endl; // theoretically setting up headers
      }
 
     // Define variables needed throughout the program
@@ -77,9 +86,7 @@ public:
         ImGui::Begin("Playing GUI");
 
         // for preset, a list of the chords
-        const char* items[] = { "A Minor 1", "A Major 1", "B Minor 1", "B Major 1", "C Minor 2", "C Major 2", 
-                                "D Minor 2", "D Major 2", "E Minor 2", "E Major 2", "F Minor 2", "F Major 2",
-                                "G Minor 2", "G Major 2"}; // chord names
+        const char* items[] = {"D Minor 3", "D Major 3", "E Minor 3", "E Major 3"}; // chord names
         static int item_current = 0; // Starts at first item in the list
         const char* combo_label = items[item_current]; // Gives the preview before anything is played
         if(ImGui::BeginCombo("Presets", combo_label)){ // no flags
@@ -93,7 +100,7 @@ public:
             }
 
             // determine the current signal
-            currentChord = chordNew.signal_list[item_current]; // theoretically gives name needed
+            currentChord = chordNew.signal_list[item_current+14]; // theoretically gives name needed
 
             ImGui::EndCombo();
         };
@@ -102,7 +109,6 @@ public:
         static int sus = 0; // I think this is the vector being adjusted
         if(ImGui::SliderInt("Sustain", &sus, 0, 2)){  // if use SliderInt2 will have 2 back to back same range
             // sus is determined here, this is duration value
-            std::cout << "sustain is " << sus << std::endl;
         }; 
         static int amp = 0; // The value to be adjusted
         if(ImGui::SliderInt("Intensity", &amp, 0, 3)){
@@ -139,7 +145,6 @@ public:
             // sleep(finalSignal.length()); // sleep makes sure you cannot play another cue before that cue is done (in theory)
             // sleep is a blocking function
 
-            std::cout << channelSignals[0].length() << " s for playing" << std::endl;
             }; 
         ImGui::SameLine();
         if(ImGui::Button("Loop", buttonSize)){
@@ -150,34 +155,12 @@ public:
             chordNew = Chord(currentChord, sus, amp, isSim);
             channelSignals = chordNew.playValues(); // get the values of the signal
 
-            std::cout << "Pause value is " << pause << std::endl;
-            std::cout << channelSignals[0].length() << " s for playing" << std::endl;
             start_loop = true;
         }; 
         ImGui::SameLine();        
         if(ImGui::Button("Pause", buttonSize)){
                 pause = 1;
             }; 
-        /*
-        if(ImGui::Button("Reverse", buttonSize)){ // You may want to create a popup with repeat option
-            chordNew(currentChord, sus, amp, isSim);
-            channelSignals = chordNew.playValues(); // get the values of the signal
-
-
-            // replace the loop
-            pause = 0;
-            play_once = true;
-            start_loop = true;
-            // start_loop = true;
-            play_clock.restart();
-
-            // Play the signal
-            s.play(1, channelSignals[0]); // play has (channel, signal)
-            s.play(2, channelSignals[1]); 
-            s.play(3, channelSignals[2]); 
-            // sleep(finalSignal.length()); // sleep makes sure you cannot play another cue before that cue is done (in theory)
-            // sleep is a blocking function
-        }; */
 
         // Stop the signal with pause loop
         if (pause == 1 || !start_loop){
@@ -227,7 +210,6 @@ public:
                 // put things here for what should happen once closed or else it will run foreverrrr
                 std::string predone(buf); // gets rid of null characters
                 sigName = predone + ".sig"; // now set the name to what we want
-                std::cout << sigName << std::endl;
 
                 // determine the signal
                 chordNew = Chord(currentChord, sus, amp, isSim);
@@ -249,6 +231,9 @@ public:
         {
             ImGui::OpenPopup("logging_things"); // open a popup and name it for calling
             // This just needs its own space, no curlies for the if
+
+            // need to update information that was used even if did not press play
+            chordNew = Chord(currentChord, sus, amp, isSim);
         }  
         static char num[120]; // info holder 
         if(ImGui::BeginPopup("logging_things")) // if clicked essentially
@@ -264,7 +249,14 @@ public:
                 // put things here for what should happen once closed or else it will run foreverrrr
                 std::string notes_taken(num); // gets rid of null characters
                 // LOG(Info) << "Notes for trial " << trial_num << " are: " + notes_taken + " for the " << item_current << " chord with a hold of " << sus << " and amplitude of " << amp << "."; // now log this information
-                LOG(Info) << trial_num << "," << item_current << "," << sus << "," << amp << "," << val << "," << arous << "," + notes_taken;
+                // LOG(Info) << trial_num << "," << item_current << "," << sus << "," << amp << "," << val << "," << arous << "," + notes_taken;
+                
+                // excel
+                file_name << trial_num << ",";
+                file_name <<  item_current << "," << sus << "," << amp << "," << isSim << "," << chordNew.getMajor() << ",";
+                file_name << val << "," << arous << ",";
+                file_name << notes_taken << std::endl;
+                
                 trial_num++;
             }
             ImGui::EndPopup();            
@@ -278,6 +270,9 @@ public:
 
 // actually open GUI
 int main() {
+    std::cout << "What is today's date followed by a letter of the alphabet?" << std::endl;
+    std::cin >> saveSubject;
+
     MyGui my_gui;
     my_gui.run();
     return 0;
