@@ -26,10 +26,10 @@ FetchContent_Declare(syntacts GIT_REPOSITORY https://github.com/mahilab/Syntacts
 FetchContent_MakeAvailable(syntacts)
 
 # create an executable from main.cpp and link it to wanted libraries
-add_executable(myApp src/main.cpp)
-target_link_libraries(myApp syntacts)
-target_link_libraries(myApp mahi::util)
-target_link_libraries(myApp mahi::gui)
+# add_executable(myApp src/main.cpp)
+# target_link_libraries(myApp syntacts)
+# target_link_libraries(myApp mahi::util)
+# target_link_libraries(myApp mahi::gui)
 
 # create an executable from pilot2_twosignals.cpp and link it to wanted libraries
 add_executable(seqsim src/pilot2_seqsim.cpp src/Chord.cpp src/Note.cpp)
