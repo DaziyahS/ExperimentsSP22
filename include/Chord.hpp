@@ -57,8 +57,12 @@ struct Chord
         std::vector<int> g_minor_n2 = {12, 15, 20, 0};
         std::vector<int> g_major_n2 = {12, 16, 20, 1};
 
+        std::vector<int> d_minor_n3 = {20, 23, 27, 0};
+        std::vector<int> d_major_n3 = {20, 24, 27, 1};
+        std::vector<int> e_minor_n3 = {22, 25, 29, 0};
+        std::vector<int> e_major_n3 = {22, 26, 29, 1};
+
         // predefine the chords list
         // what's their names
-        
 
 };
