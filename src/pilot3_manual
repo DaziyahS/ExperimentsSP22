@@ -107,6 +107,31 @@ public:
 // for between trials
 midScreen()
 {
+    /* // in case I can possibly make a new file this way!
+    if(ImGui::Button("New Name", buttonSize))
+    {
+        ImGui::OpenPopup("change_files"); // open a popup and name it for calling
+        // This just needs its own space, no curlies for the if
+    }  
+    static char name[120]; // info holder 
+    if(ImGui::BeginPopup("logging_things")) // if clicked essentially
+    {
+        ImGui::Text("What is the new name: "); // precursor for me to understand
+        ImGui::InputText("##edit", name, IM_ARRAYSIZE(name)); // size wanted           
+        if (ImGui::Button("Close"))
+        {
+            ImGui::CloseCurrentPopup();
+            // put things here for what should happen once closed or else it will run foreverrrr 
+            
+            // theoretically creates a new file 
+            file_name.open("../../Data/" + saveSubject + name + "_piloting.csv"); // saves the csv name for all parameters
+            file_name << "Trial" << "," << "Chord" << "," << "Sus" << "," << "Amp" << "," << "IsSim" << "," << "IsMajor" << ","
+                      << "Valence" << "," << "Arousal" << "," << "Notes" << std::endl; // theoretically setting up headers
+        }
+    }
+    {
+    }
+    */
     if (ImGui::Button("Next Screen",buttonSize))
     {
         screen_name = trial_screen;
