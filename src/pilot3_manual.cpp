@@ -226,6 +226,7 @@ void trialScreen()
         play_clock.restart(); // attempting a non-blocking version of sleep, reset the counter
     }
 
+    ImGui::SameLine();
     if(ImGui::Button("Log", buttonSize))
     {
         ImGui::OpenPopup("logging_things"); // open a popup and name it for calling
