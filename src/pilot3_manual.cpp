@@ -202,48 +202,6 @@ void trialScreen()
         // sleep is a blocking function
 
         }; 
-    ImGui::SameLine();
-    if(ImGui::Button("Loop", buttonSize)){
-        // Initialize the ability to repeat
-        pause = 0;
-
-        // determine the signal
-        chordNew = Chord(currentChord, sus, amp, isSim);
-        channelSignals = chordNew.playValues(); // get the values of the signal
-
-        start_loop = true;
-    }; 
-    ImGui::SameLine();        
-    if(ImGui::Button("Pause", buttonSize)){
-            pause = 1;
-        }; 
-    /*
-    if(ImGui::Button("Reverse", buttonSize)){ // You may want to create a popup with repeat option
-        chordNew(currentChord, sus, amp, isSim);
-        channelSignals = chordNew.playValues(); // get the values of the signal
-
-
-        // replace the loop
-        pause = 0;
-        play_once = true;
-        start_loop = true;
-        // start_loop = true;
-        play_clock.restart();
-
-        // Play the signal
-        s.play(1, channelSignals[0]); // play has (channel, signal)
-        s.play(2, channelSignals[1]); 
-        s.play(3, channelSignals[2]); 
-        // sleep(finalSignal.length()); // sleep makes sure you cannot play another cue before that cue is done (in theory)
-        // sleep is a blocking function
-    }; */
-
-    // Stop the signal with pause loop
-    if (pause == 1 || !start_loop){
-        s.stopAll(); // stop all channels playing
-        start_loop = false; // turn off the looping
-        play_once = false; // turn off the play once
-    }
 
     // Play the signal once
     if (play_once)
@@ -268,41 +226,6 @@ void trialScreen()
         play_clock.restart(); // attempting a non-blocking version of sleep, reset the counter
     }
 
-    if(ImGui::Button("Save", buttonSize))
-    {
-        ImGui::OpenPopup("saving_things"); // open a popup and name it for calling
-        // This just needs its own space, no curlies for the if
-    }   
-    // necessary variables
-    static char buf[31]; // name holder
-    if(ImGui::BeginPopup("saving_things")) // if clicked essentially
-    {
-        ImGui::Text("Signal name is: "); // precursor for people to understand
-        ImGui::InputText("##edit", buf, IM_ARRAYSIZE(buf), ImGuiInputTextFlags_CharsNoBlank); // no space allowed, size wanted
-        if (ImGui::Button("Close"))
-        {
-            if (isSim == false){
-            ImGui::CloseCurrentPopup();
-            // put things here for what should happen once closed or else it will run foreverrrr
-            std::string predone(buf); // gets rid of null characters
-            sigName = predone + ".sig"; // now set the name to what we want
-
-            // determine the signal
-            chordNew = Chord(currentChord, sus, amp, isSim);
-            channelSignals = chordNew.playValues(); // get the values of the signal
-
-
-            // Save the signal
-            fileLocal = "../../Library/" + sigName; // create file path for library
-            tact::Library::exportSignal(channelSignals[0], fileLocal); // export signal to library
-            }
-            else{
-                // do nothing because cannot because simultaneous and all different
-            }
-        }
-        ImGui::EndPopup();            
-    }
-    ImGui::SameLine();
     if(ImGui::Button("Log", buttonSize))
     {
         ImGui::OpenPopup("logging_things"); // open a popup and name it for calling
