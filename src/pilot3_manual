@@ -113,7 +113,7 @@ midScreen()
         ImGui::OpenPopup("change_files"); // open a popup and name it for calling
         // This just needs its own space, no curlies for the if
     }  
-    static char name[120]; // info holder 
+    static char name[12]; // info holder 
     if(ImGui::BeginPopup("logging_things")) // if clicked essentially
     {
         ImGui::Text("What is the new name: "); // precursor for me to understand
@@ -128,8 +128,6 @@ midScreen()
             file_name << "Trial" << "," << "Chord" << "," << "Sus" << "," << "Amp" << "," << "IsSim" << "," << "IsMajor" << ","
                       << "Valence" << "," << "Arousal" << "," << "Notes" << std::endl; // theoretically setting up headers
         }
-    }
-    {
     }
     */
     if (ImGui::Button("Next Screen",buttonSize))
