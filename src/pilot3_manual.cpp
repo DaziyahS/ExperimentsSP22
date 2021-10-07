@@ -202,6 +202,12 @@ void trialScreen()
         // sleep is a blocking function
 
         }; 
+    // Stop the signal with pause loop
+    if (pause == 1 || !start_loop){
+        s.stopAll(); // stop all channels playing
+        start_loop = false; // turn off the looping
+        play_once = false; // turn off the play once
+    }
 
     // Play the signal once
     if (play_once)
