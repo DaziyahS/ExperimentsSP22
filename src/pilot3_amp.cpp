@@ -19,8 +19,13 @@ tell the person to talk to me, or give them more information
 // trial 1
 include information for timestamp
 set up the parameters
-define the base cue parameters
-randomize the parameters wanted
+    define the base cue parameters
+randomize the amplitudes wanted into a vector
+    math to determine trials: 10 minute session, 15 seconds to choose, 600 s / 15 s = 40 trials
+    create vector of length 40 with 10 of each amplitude option
+    randomize the vector
+display
+press button
 
 
 
