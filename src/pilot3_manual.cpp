@@ -59,6 +59,9 @@ public:
         file_name.open("../../Data/" + saveSubject + "_piloting.csv"); // saves the csv name for all parameters
         file_name << "Trial" << "," << "Chord" << "," << "Sus" << "," << "Amp" << "," << "IsSim" << "," << "IsMajor" << ","
                   << "Valence" << "," << "Arousal" << "," << "Notes" << std::endl; // theoretically setting up headers
+        
+        // so the current chord can play immediately
+        currentChord = chordNew.signal_list[14];
      }
 
     // Define variables needed throughout the program
@@ -202,12 +205,6 @@ void trialScreen()
         // sleep is a blocking function
 
         }; 
-    // Stop the signal with pause loop
-    if (pause == 1 || !start_loop){
-        s.stopAll(); // stop all channels playing
-        start_loop = false; // turn off the looping
-        play_once = false; // turn off the play once
-    }
 
     // Play the signal once
     if (play_once)
@@ -219,17 +216,9 @@ void trialScreen()
         if(play_clock.get_elapsed_time().as_seconds() > channelSignals[0].length()){ // if whole signal is played
             play_once = false; // set bool to false
             start_loop = false;
+            s.stopAll();
             pause = 1;
         }
-    }
-    // Play the signal repeatedly
-    else if ((play_clock.get_elapsed_time().as_seconds() > channelSignals[0].length() && pause == 0) || start_loop)
-    { // if pause has not been pressed and is time to restart signal
-        // Play the signal
-        s.play(leftTact, channelSignals[0]); // play has (channel, signal)
-        s.play(botTact, channelSignals[1]); 
-        s.play(rightTact, channelSignals[2]); 
-        play_clock.restart(); // attempting a non-blocking version of sleep, reset the counter
     }
 
     ImGui::SameLine();
