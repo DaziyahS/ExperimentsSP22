@@ -43,6 +43,12 @@ target_link_libraries(manual syntacts)
 target_link_libraries(manual mahi::util)
 target_link_libraries(manual mahi::gui)
 
+# create an executable from pilot2_twosignals.cpp and link it to wanted libraries
+add_executable(major src/pilot3_major.cpp src/Chord.cpp src/Note.cpp)
+target_link_libraries(major syntacts)
+target_link_libraries(major mahi::util)
+target_link_libraries(major mahi::gui)
+
 # # create an executable from main.cpp and link it to wanted libraries
 # add_executable(notes notes_info.cpp)
 # target_link_libraries(notes syntacts)
