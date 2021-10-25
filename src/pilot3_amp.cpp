@@ -76,7 +76,9 @@ public:
     bool play_once = false;    // for playing a cue one time    
     // Set up timing within the trials itself
     Clock trial_clock;
-    Time time2;
+    Time timeRespond;
+    Time time1;
+    Time time1_old;
     // The amplitudes in a vector
     std::vector<int> list = {0, 1, 2, 3};
 
@@ -170,7 +172,7 @@ void transScreen()
     file_name.open("../../Data/" + saveSubject + "_pilotingAmp_" + trial_numChar + ".csv"); // saves the csv name for all parameters
     // First line of the code
     file_name << "Trial" << "," << "Chord" << "," << "Sus" << "," << "Amp" << "," << "IsSim" << "," << "IsMajor" << ","
-              << "Valence" << "," << "Arousal" << "," << "Notes" << std::endl; // theoretically setting up headers
+              << "Valence" << "," << "Arousal" << "," << "Time" << std::endl; // theoretically setting up headers
     // Write message for person
     ImGui::Text("Trial number is your intermediate screen.");
 
@@ -231,18 +233,29 @@ void trialScreen()
         count = 0;
         // set first_in_trial to false so initial randomization can happen once
         first_in_trial = false;
+        time1_old = 0;
+        trial_clock.restart;
     }
     
     if (count < 40){
         // Play the cue
         if(ImGui::Button("Play")){
             int cue_num = count%4;
-            play_trial(cue_num);
-
+            // what is amp
+            // play_trial(cue_num);
         }
         // Go to next cue
         if(ImGui::Button("Next")){
             // Record the answers
+            // timestamp information
+            time1 = trial_clock.get_elapsed_time().as_seconds();
+            timeRespond = time1 - time1_old;
+            time1_old = time1;
+            // put in the excel sheet
+            file_name << count << "," << chordName << "," << sus << "," << amp << "," << "IsSim" << "," << "IsMajor" << ","
+                      << "Valence" << "," << "Arousal" << "," << "Time" << std::endl; // theoretically setting up headers
+    
+
 
             // shuffle the list if needed
             int cue_num = count % 4;
