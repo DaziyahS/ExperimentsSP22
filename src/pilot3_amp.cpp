@@ -70,9 +70,17 @@ public:
     // For saving records
     int trial_num = 0;
     int val = 0, arous = 0;
+    int final_trial_num = 5;
     // For playing the signal
     Clock play_clock; // keeping track of time for non-blocking pauses
-    bool play_once = false;    // for playing a cue one time
+    bool play_once = false;    // for playing a cue one time    
+    // Set up timing within the trials itself
+    Clock trial_clock;
+    Time time2;
+    // The amplitudes in a vector
+    std::vector<int> list = {0, 1, 2, 3};
+
+    bool first_in_trial = false;
     // for screens
     std::string screen_name = "trial_screen";
     int exp_num = 1;
@@ -89,6 +97,7 @@ public:
         else if (screen_name == "trans_screen")
         {
             transScreen();
+            first_in_trial = true;
         }
         else if (screen_name == "trial_screen")
         {
@@ -162,7 +171,9 @@ void transScreen()
     // First line of the code
     file_name << "Trial" << "," << "Chord" << "," << "Sus" << "," << "Amp" << "," << "IsSim" << "," << "IsMajor" << ","
               << "Valence" << "," << "Arousal" << "," << "Notes" << std::endl; // theoretically setting up headers
-    // go to next page
+    // Write message for person
+    ImGui::Text("Trial number is your intermediate screen.");
+
     // Go to next screen
     screen_name = "trial_screen";
 }
@@ -196,7 +207,65 @@ press button
 */
 void trialScreen()
 {
+    // Set up the paramaters
+    // Define the base cue paramaters
+    sus = 1;
+    isSim = false; // sequential
+    // for (size_t i = 0; i < 10; i++)
+    // {
+    //     for (size_t j = 0; j < 4; j++)
+    //     {
+    //         list.push_back(j);
+    //     }    
+    // }
 
+    // internal trial tracker
+    static int count = 0;
+    // random number generator
+    static auto rng = std::default_random_engine {};
+
+    if (first_in_trial){
+        // initial randomization
+        std::shuffle(std::begin(list), std::end(list), rng);
+        // counter for trial starts at 0 in beginning
+        count = 0;
+        // set first_in_trial to false so initial randomization can happen once
+        first_in_trial = false;
+    }
+    
+    if (count < 40){
+        // Play the cue
+        if(ImGui::Button("Play")){
+            int cue_num = count%4;
+            play_trial(cue_num);
+
+        }
+        // Go to next cue
+        if(ImGui::Button("Next")){
+            // Record the answers
+
+            // shuffle the list if needed
+            int cue_num = count % 4;
+            if (cue_num == 3){
+                std::shuffle(std::begin(list), std::end(list), rng);            
+            }
+            // increase the list number
+            count++;
+        }
+    }
+    else // if trials are done
+    {
+        if(trial_num < final_trial_num) // if not final trial
+        {
+            screen_name = "trans_screen";
+            file_name.close();
+        }
+        else // if final trial
+        {
+            screen_name = "end_screen";
+            file_name.close();
+        }
+    }    
 }
 
 /*
@@ -206,7 +275,7 @@ All done. Thank you for your participation
 */
 void endScreen()
 {
-
+    ImGui::Text("Thank you for your participation!");
 }
 
 }
