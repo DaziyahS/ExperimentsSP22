@@ -74,17 +74,16 @@ public:
     int final_trial_num = 5;
     // For playing the signal
     Clock play_clock; // keeping track of time for non-blocking pauses
-    bool play_once = false;    // for playing a cue one time    
+    bool playTime = true;   // for knowing how long to play cues
     // Set up timing within the trials itself
     Clock trial_clock;
-    Time timeRespond;
-    Time time1;
-    Time time1_old;
+    double timeRespond;
+    double time1;
+    double time1_old;
     // The amplitudes in a vector
     std::vector<int> list = {0, 1, 2, 3};
     // Vector for if play can be pressed
     bool dontPlay = false;
-    bool playTime = true;
     bool first_in_trial = false;
     // for collecting data
     int item_current_val = 0;
@@ -216,7 +215,7 @@ void trialScreen()
     // Set up the paramaters
     // Define the base cue paramaters
     sus = 1;
-    currentChord = chordNew.signal_list[currentChordNum]];
+    currentChord = chordNew.signal_list[currentChordNum];
     // for (size_t i = 0; i < 10; i++)
     // {
     //     for (size_t j = 0; j < 4; j++)
@@ -237,8 +236,6 @@ void trialScreen()
         count = 0;
         // set first_in_trial to false so initial randomization can happen once
         first_in_trial = false;
-        time1_old = 0;
-        trial_clock.restart;
     }
     
     if (count < 40){
@@ -258,18 +255,25 @@ void trialScreen()
                 s.play(botTact, channelSignals[1]); 
                 s.play(rightTact, channelSignals[2]); 
 
+                // reset the play time clock 
                 play_clock.restart();
+                // allow for the play time to measured and pause to be enabled
                 playTime = true;
 
+                // Let the user know that they should feel something
                 ImGui::Text("The cue is currently playing.");
+                // Don't allow the user to press play again
                 dontPlay = true;
             }
         }
+        // Dictate how long the signal plays
         if (playTime)
-        {
+        {   
+            // if the signal time has passed, stop the signal on all channels
             if(play_clock.get_elapsed_time().as_seconds() > channelSignals[0].length()){ // if whole signal is played
                     s.stopAll();
-                    playTime = false;
+                    playTime = false; // do not reopen this until Play is pressed again
+                    trial_clock.restart(); // start recording the response time
                 }
         }
         else {
@@ -356,10 +360,8 @@ void trialScreen()
             // Go to next cue
             if(ImGui::Button("Next")){
                 // Record the answers
-                // timestamp information
-                time1 = trial_clock.get_elapsed_time().as_seconds();
-                timeRespond = time1 - time1_old;
-                time1_old = time1;
+                // timestamp information**********
+                timeRespond = trial_clock.get_elapsed_time().as_seconds(); // get response time
                 // put in the excel sheet
                 file_name << count << ","; // track trial
                 file_name << currentChordNum << "," << sus << "," << amp << "," << isSim << "," << chordNew.getMajor() << ","; // gathers experimental paramaters
@@ -405,7 +407,17 @@ void endScreen()
     ImGui::Text("Thank you for your participation!");
 }
 
-}
+};
+
+// actually open GUI
+int main() {
+    std::cout << "What is today's date followed by a letter of the alphabet?" << std::endl;
+    std::cin >> saveSubject;
+
+    MyGui my_gui;
+    my_gui.run();
+    return 0;
+} 
 
 /*
 
