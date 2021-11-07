@@ -64,6 +64,7 @@ public:
     Chord chordNew;
     std::vector<tact::Signal> channelSignals;
     bool isSim = false; // default is sequential
+    int amp, sus;
     // For saving the signal
     std::string sigName; // name for saved signal
     std::string fileLocal; // for storing the signal
@@ -81,6 +82,8 @@ public:
     Time time1_old;
     // The amplitudes in a vector
     std::vector<int> list = {0, 1, 2, 3};
+    // Vector for if play can be pressed
+    bool dontPlay = false;
 
     bool first_in_trial = false;
     // for screens
@@ -235,32 +238,55 @@ void trialScreen()
     }
     
     if (count < 40){
-        // Play the cue
-        if(ImGui::Button("Play")){
-            int cue_num = count%4;
-            // what is amp
-            // play_trial(cue_num);
-        }
-        // Go to next cue
-        if(ImGui::Button("Next")){
-            // Record the answers
-            // timestamp information
-            time1 = trial_clock.get_elapsed_time().as_seconds();
-            timeRespond = time1 - time1_old;
-            time1_old = time1;
-            // put in the excel sheet
-            file_name << count << "," << chordName << "," << sus << "," << amp << "," << "IsSim" << "," << "IsMajor" << ","
-                      << "Valence" << "," << "Arousal" << "," << "Time" << std::endl; // theoretically setting up headers
-    
-
-
-            // shuffle the list if needed
-            int cue_num = count % 4;
-            if (cue_num == 3){
-                std::shuffle(std::begin(list), std::end(list), rng);            
+        if (!dontPlay){
+            // Play the cue
+            if(ImGui::Button("Play")){
+                // determine which part of the list should be used
+                int cue_num = count%4;
+                // determine what is the amp
+                amp = list[cue_num];
+                // create the cue
+                chordNew = Chord(currentChord, sus, amp, isSim);
+                // determine the values for each channel
+                channelSignals = chordNew.playValues;
+                // play_trial(cue_num);
+                s.play(leftTact, channelSignals[0]);
+                s.play(botTact, channelSignals[1]); 
+                s.play(rightTact, channelSignals[2]); 
+                
+                dontPlay = true;
             }
-            // increase the list number
-            count++;
+        }
+        else {
+            // Give option to provide input
+            if (ImGui::TreeNode("Selectables"))
+            {
+                if (ImGui::TreeNode(""))
+                ImGui::TreePop();
+            }
+            
+            
+            // Go to next cue
+            if(ImGui::Button("Next")){
+                // Record the answers
+                // timestamp information
+                time1 = trial_clock.get_elapsed_time().as_seconds();
+                timeRespond = time1 - time1_old;
+                time1_old = time1;
+                // put in the excel sheet
+                file_name << count << "," << chordName << "," << sus << "," << amp << "," << "IsSim" << "," << "IsMajor" << ","
+                        << "Valence" << "," << "Arousal" << "," << "Time" << std::endl; // theoretically setting up headers
+        
+
+
+                // shuffle the list if needed
+                int cue_num = count % 4;
+                if (cue_num == 3){
+                    std::shuffle(std::begin(list), std::end(list), rng);            
+                }
+                // increase the list number
+                count++;
+            }
         }
     }
     else // if trials are done
