@@ -78,8 +78,6 @@ public:
     // Set up timing within the trials itself
     Clock trial_clock;
     double timeRespond;
-    double time1;
-    double time1_old;
     // The amplitudes in a vector
     std::vector<int> list = {0, 1, 2, 3};
     // Vector for if play can be pressed
@@ -371,7 +369,7 @@ void trialScreen()
                 item_current_val = 0;
                 item_current_arous = 0;
 
-                // shuffle the list if needed
+                // shuffle the amplitude list if needed
                 int cue_num = count % 4;
                 if (cue_num == 3){
                     std::shuffle(std::begin(list), std::end(list), rng);            
@@ -405,6 +403,7 @@ All done. Thank you for your participation
 void endScreen()
 {
     ImGui::Text("Thank you for your participation!");
+    ImGui::Text("Please let the experimenter know that you are finished.");
 }
 
 };
