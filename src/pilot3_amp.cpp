@@ -84,6 +84,7 @@ public:
     std::vector<int> list = {0, 1, 2, 3};
     // Vector for if play can be pressed
     bool dontPlay = false;
+    bool playTime = true;
     bool first_in_trial = false;
     // for collecting data
     int item_current_val = 0;
@@ -251,15 +252,25 @@ void trialScreen()
                 // create the cue
                 chordNew = Chord(currentChord, sus, amp, isSim);
                 // determine the values for each channel
-                channelSignals = chordNew.playValues;
+                channelSignals = chordNew.playValues();
                 // play_trial(cue_num);
                 s.play(leftTact, channelSignals[0]);
                 s.play(botTact, channelSignals[1]); 
                 s.play(rightTact, channelSignals[2]); 
-                
+
+                play_clock.restart();
+                playTime = true;
+
                 ImGui::Text("The cue is currently playing.");
                 dontPlay = true;
             }
+        }
+        if (playTime)
+        {
+            if(play_clock.get_elapsed_time().as_seconds() > channelSignals[0].length()){ // if whole signal is played
+                    s.stopAll();
+                    playTime = false;
+                }
         }
         else {
             // Give option to provide input
@@ -365,6 +376,7 @@ void trialScreen()
                 }
                 // increase the list number
                 count++;
+                dontPlay = false;
             }
         }
     }
