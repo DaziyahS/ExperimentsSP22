@@ -37,13 +37,13 @@ target_link_libraries(seqsim syntacts)
 target_link_libraries(seqsim mahi::util)
 target_link_libraries(seqsim mahi::gui)
 
-# create an executable from pilot2_twosignals.cpp and link it to wanted libraries
+# create an executable from pilot3_manual.cpp and link it to wanted libraries
 add_executable(manual src/pilot3_manual.cpp src/Chord.cpp src/Note.cpp)
 target_link_libraries(manual syntacts)
 target_link_libraries(manual mahi::util)
 target_link_libraries(manual mahi::gui)
 
-# create an executable from pilot2_twosignals.cpp and link it to wanted libraries
+# create an executable from pilot3_amp.cpp and link it to wanted libraries
 add_executable(amp src/pilot3_amp.cpp src/Chord.cpp src/Note.cpp)
 target_link_libraries(amp syntacts)
 target_link_libraries(amp mahi::util)

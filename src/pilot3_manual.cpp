@@ -81,7 +81,6 @@ public:
     Clock play_clock; // keeping track of time for non-blocking pauses
     bool play_once = false;    // for playing a cue one time
     bool start_loop = false;  // for playing a cue multiple times
-    int pause = 1; // can pause the cue at any time
     // for screens
     std::string screen_name = "trial_screen";
     int exp_num = 1;
@@ -191,7 +190,6 @@ void trialScreen()
         channelSignals = chordNew.playValues(); // get the values of the signal
 
         // replace the loop
-        pause = 0;
         play_once = true;
         start_loop = true;
         // start_loop = true;
@@ -217,7 +215,6 @@ void trialScreen()
             play_once = false; // set bool to false
             start_loop = false;
             s.stopAll();
-            pause = 1;
         }
     }
 
