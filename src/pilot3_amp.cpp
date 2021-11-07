@@ -64,33 +64,42 @@ public:
     Chord chordNew;
     std::vector<tact::Signal> channelSignals;
     bool isSim = false; // default is sequential
+    int amp, sus;
     // For saving the signal
     std::string sigName; // name for saved signal
     std::string fileLocal; // for storing the signal
     // For saving records
-    int trial_num = 0;
+    int trial_num = 0; // counter for overall trials
+    int experiment_num = 40; // amount of trials in experiment
     int val = 0, arous = 0;
-    int final_trial_num = 5;
+    int final_trial_num = 6;
     // For playing the signal
     Clock play_clock; // keeping track of time for non-blocking pauses
-    bool play_once = false;    // for playing a cue one time    
+    bool playTime = false;   // for knowing how long to play cues
     // Set up timing within the trials itself
     Clock trial_clock;
-    Time timeRespond;
-    Time time1;
-    Time time1_old;
+    double timeRespond;
     // The amplitudes in a vector
     std::vector<int> list = {0, 1, 2, 3};
-
+    // The base parameters for my chords
+    std::vector<int> chordList = {14, 15}; // for D Note
+    std::vector<int> susList = {0, 1, 2};
+    std::vector<int> baseChordList;
+    std::vector<int> baseSusList;
+    // Vector for if play can be pressed
+    bool dontPlay = false;
     bool first_in_trial = false;
+    // for collecting data
+    int item_current_val = 0;
+    int item_current_arous = 0;
+    int currentChordNum = 14;
     // for screens
-    std::string screen_name = "trial_screen";
-    int exp_num = 1;
+    std::string screen_name = "begin_screen";
 
     virtual void update() override
     {
         ImGui::Begin("Playing GUI");
-        ImGui::Text("The current experiment number is: %i", exp_num);
+        ImGui::Text("The current experiment number is: %i", trial_num);
         
         if (screen_name == "begin_screen")
         {
@@ -146,9 +155,21 @@ void beginScreen()
             saveSubject = name;
             // Create a new file 
             file_name.open("../../Data/" + saveSubject + "_pilotingAmp.csv"); // saves the csv name for all parameters
+            // First line of the code
+            file_name << "Trial" << "," << "Chord" << "," << "Sus" << "," << "Amp" << "," << "IsSim" << "," << "IsMajor" << ","
+                      << "Valence" << "," << "Arousal" << "," << "Time" << std::endl; // theoretically setting up headers
 
             // Go to next screen
             screen_name = "trans_screen";
+
+            // Determine the parameters for base cue values********
+            static auto rng1 = std::default_random_engine {}; // for major or minor
+            std::shuffle(std::begin(chordList), std::end(chordList), rng1); 
+            baseChordList = {chordList[0], chordList[0], chordList[0], chordList[1], chordList[1], chordList[1]};
+            static auto rng2 = std::default_random_engine {};
+            std::shuffle(std::begin(susList), std::end(susList), rng2); 
+            baseSusList = {susList[0], susList[1], susList[2], susList[1], susList[2], susList[0]}; // psuedo randomization
+
         }
         ImGui::EndPopup();
     }
@@ -164,20 +185,20 @@ tell the person to talk to me, or give them more information
 */
 void transScreen()
 {
-    // update trial number
-    trial_num++;
-    char trial_numChar = (char)(trial_num + 48); // adds 0 char value for us
-
-    // Create a new file 
-    file_name.open("../../Data/" + saveSubject + "_pilotingAmp_" + trial_numChar + ".csv"); // saves the csv name for all parameters
-    // First line of the code
-    file_name << "Trial" << "," << "Chord" << "," << "Sus" << "," << "Amp" << "," << "IsSim" << "," << "IsMajor" << ","
-              << "Valence" << "," << "Arousal" << "," << "Time" << std::endl; // theoretically setting up headers
+    
     // Write message for person
     ImGui::Text("Trial number is your intermediate screen.");
 
-    // Go to next screen
-    screen_name = "trial_screen";
+    if (ImGui::Button("Begin Next Experiment")){
+        // Go to next screen
+        screen_name = "trial_screen";
+        // likely where I will be determining the base cue, trial number makes sense to code here
+        sus = baseSusList[trial_num];
+        currentChordNum = baseChordList[trial_num];
+
+        // update trial number to make sense to me
+        trial_num++; // this will be used to determine what are the characteristics held steady
+    }
 }
 
 /*
@@ -211,8 +232,7 @@ void trialScreen()
 {
     // Set up the paramaters
     // Define the base cue paramaters
-    sus = 1;
-    isSim = false; // sequential
+    currentChord = chordNew.signal_list[currentChordNum];
     // for (size_t i = 0; i < 10; i++)
     // {
     //     for (size_t j = 0; j < 4; j++)
@@ -233,37 +253,152 @@ void trialScreen()
         count = 0;
         // set first_in_trial to false so initial randomization can happen once
         first_in_trial = false;
-        time1_old = 0;
-        trial_clock.restart;
     }
     
-    if (count < 40){
-        // Play the cue
-        if(ImGui::Button("Play")){
-            int cue_num = count%4;
-            // what is amp
-            // play_trial(cue_num);
-        }
-        // Go to next cue
-        if(ImGui::Button("Next")){
-            // Record the answers
-            // timestamp information
-            time1 = trial_clock.get_elapsed_time().as_seconds();
-            timeRespond = time1 - time1_old;
-            time1_old = time1;
-            // put in the excel sheet
-            file_name << count << "," << chordName << "," << sus << "," << amp << "," << "IsSim" << "," << "IsMajor" << ","
-                      << "Valence" << "," << "Arousal" << "," << "Time" << std::endl; // theoretically setting up headers
-    
+    if (count < experiment_num){
+        if (!dontPlay){
+            // Play the cue
+            if(ImGui::Button("Play")){
+                // determine which part of the list should be used
+                int cue_num = count%4;
+                // determine what is the amp
+                amp = list[cue_num];
+                // create the cue
+                chordNew = Chord(currentChord, sus, amp, isSim);
+                // determine the values for each channel
+                channelSignals = chordNew.playValues();
+                // play_trial(cue_num);
+                s.play(leftTact, channelSignals[0]);
+                s.play(botTact, channelSignals[1]); 
+                s.play(rightTact, channelSignals[2]); 
 
-
-            // shuffle the list if needed
-            int cue_num = count % 4;
-            if (cue_num == 3){
-                std::shuffle(std::begin(list), std::end(list), rng);            
+                // reset the play time clock 
+                play_clock.restart();
+                // allow for the play time to be measured and pause to be enabled
+                playTime = true;
             }
-            // increase the list number
-            count++;
+        }
+        else {
+            // Give option to provide input
+            // Valence Drop Down
+            const char* itemsVal[] = {" ", "-2", "-1","0", "1", "2"};
+            const char* combo_labelVal = itemsVal[item_current_val];
+            if(ImGui::BeginCombo("Valence", combo_labelVal)){
+                for (int n = 0; n < IM_ARRAYSIZE(itemsVal); n++)
+                {
+                    const bool is_selected = (item_current_val == n);
+                    if (ImGui::Selectable(itemsVal[n], is_selected))
+                        item_current_val = n; // gives a value to the selection states
+                    if (is_selected)
+                        ImGui::SetItemDefaultFocus(); // focuses on item selected
+                }
+
+                // determine the valence value selected
+                switch(item_current_val)
+                {
+                    case 1:
+                        val = -2;
+                        break;
+                    case 2:
+                        val = -1;
+                        break;
+                    case 3:
+                        val = 0;
+                        break;
+                    case 4:
+                        val = 1;
+                        break;
+                    case 5:
+                        val = 2;
+                        break;
+                    default:
+                        // throw an error?
+                        val = 100; // this way I know this one does not count?
+                        break;
+                }
+
+                ImGui::EndCombo();
+            }
+            // Arousal Drop Down
+            const char* itemsArous[] = {" ", "-2", "-1","0", "1", "2"};
+            const char* combo_labelArous = itemsArous[item_current_arous];
+            if(ImGui::BeginCombo("Arousal", combo_labelArous)){
+                for (int n = 0; n < IM_ARRAYSIZE(itemsArous); n++)
+                {
+                    const bool is_selected = (item_current_arous == n);
+                    if (ImGui::Selectable(itemsArous[n], is_selected))
+                        item_current_arous = n; // gives a value to the selection states
+                    if (is_selected)
+                        ImGui::SetItemDefaultFocus(); // focuses on item selected
+                }
+
+                // determine the valence value selected
+                switch(item_current_arous)
+                {
+                    case 1:
+                        arous = -2;
+                        break;
+                    case 2:
+                        arous = -1;
+                        break;
+                    case 3:
+                        arous = 0;
+                        break;
+                    case 4:
+                        arous = 1;
+                        break;
+                    case 5:
+                        arous = 2;
+                        break;
+                    default:
+                        // throw an error?
+                        arous = 100; // this way I know this one does not count?
+                        break;
+                }
+                
+                ImGui::EndCombo();
+            }
+            
+            // Go to next cue
+            if(ImGui::Button("Next")){
+                // Record the answers
+                // timestamp information**********
+                timeRespond = trial_clock.get_elapsed_time().as_seconds(); // get response time
+                // put in the excel sheet
+                file_name << count << ","; // track trial
+                file_name << currentChordNum << "," << sus << "," << amp << "," << isSim << "," << chordNew.getMajor() << ","; // gathers experimental paramaters
+                file_name << val << "," << arous << "," << timeRespond << std::endl; // gathers experimental input
+
+                // reset values for drop down list
+                item_current_val = 0;
+                item_current_arous = 0;
+
+                // shuffle the amplitude list if needed
+                int cue_num = count % 4;
+                if (cue_num == 3){
+                    std::shuffle(std::begin(list), std::end(list), rng);            
+                }
+                // increase the list number
+                count++;
+                dontPlay = false;
+                std::cout << "count is " << count << std::endl; 
+            }
+        }
+        // Dictate how long the signal plays
+        if (playTime)
+        {   
+            // Let the user know that they should feel something
+            ImGui::Text("The cue is currently playing.");
+            int cue_num = count % 4;
+            // if the signal time has passed, stop the signal on all channels
+            if(play_clock.get_elapsed_time().as_seconds() > channelSignals[0].length()){ // if whole signal is played
+                    s.stopAll();
+                    playTime = false; // do not reopen this until Play is pressed again
+                    trial_clock.restart(); // start recording the response time
+                    // Don't allow the user to press play again
+                    dontPlay = true;
+                    std::cout << list[cue_num] << " ";
+                }
         }
     }
     else // if trials are done
@@ -271,7 +406,6 @@ void trialScreen()
         if(trial_num < final_trial_num) // if not final trial
         {
             screen_name = "trans_screen";
-            file_name.close();
         }
         else // if final trial
         {
@@ -289,9 +423,17 @@ All done. Thank you for your participation
 void endScreen()
 {
     ImGui::Text("Thank you for your participation!");
+    ImGui::Text("Please let the experimenter know that you are finished.");
 }
 
-}
+};
+
+// actually open GUI
+int main() {
+    MyGui my_gui;
+    my_gui.run();
+    return 0;
+} 
 
 /*
 
