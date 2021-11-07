@@ -146,6 +146,9 @@ void beginScreen()
             saveSubject = name;
             // Create a new file 
             file_name.open("../../Data/" + saveSubject + "_pilotingAmp.csv"); // saves the csv name for all parameters
+            // First line of the code
+            file_name << "Trial" << "," << "Chord" << "," << "Sus" << "," << "Amp" << "," << "IsSim" << "," << "IsMajor" << ","
+                      << "Valence" << "," << "Arousal" << "," << "Time" << std::endl; // theoretically setting up headers
 
             // Go to next screen
             screen_name = "trans_screen";
@@ -165,14 +168,8 @@ tell the person to talk to me, or give them more information
 void transScreen()
 {
     // update trial number
-    trial_num++;
-    char trial_numChar = (char)(trial_num + 48); // adds 0 char value for us
+    trial_num++; // this will be used to determine what are the characteristics held steady
 
-    // Create a new file 
-    file_name.open("../../Data/" + saveSubject + "_pilotingAmp_" + trial_numChar + ".csv"); // saves the csv name for all parameters
-    // First line of the code
-    file_name << "Trial" << "," << "Chord" << "," << "Sus" << "," << "Amp" << "," << "IsSim" << "," << "IsMajor" << ","
-              << "Valence" << "," << "Arousal" << "," << "Time" << std::endl; // theoretically setting up headers
     // Write message for person
     ImGui::Text("Trial number is your intermediate screen.");
 
@@ -212,7 +209,7 @@ void trialScreen()
     // Set up the paramaters
     // Define the base cue paramaters
     sus = 1;
-    isSim = false; // sequential
+    currentChord = chordNew.signal_list[14];
     // for (size_t i = 0; i < 10; i++)
     // {
     //     for (size_t j = 0; j < 4; j++)
