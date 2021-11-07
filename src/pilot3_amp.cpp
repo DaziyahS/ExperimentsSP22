@@ -84,8 +84,11 @@ public:
     std::vector<int> list = {0, 1, 2, 3};
     // Vector for if play can be pressed
     bool dontPlay = false;
-
     bool first_in_trial = false;
+    // for collecting data
+    int item_current_val = 0;
+    int item_current_arous = 0;
+    int currentChordNum = 14;
     // for screens
     std::string screen_name = "trial_screen";
     int exp_num = 1;
@@ -212,7 +215,7 @@ void trialScreen()
     // Set up the paramaters
     // Define the base cue paramaters
     sus = 1;
-    currentChord = chordNew.signal_list[14];
+    currentChord = chordNew.signal_list[currentChordNum]];
     // for (size_t i = 0; i < 10; i++)
     // {
     //     for (size_t j = 0; j < 4; j++)
@@ -254,17 +257,90 @@ void trialScreen()
                 s.play(botTact, channelSignals[1]); 
                 s.play(rightTact, channelSignals[2]); 
                 
+                ImGui::Text("The cue is currently playing.");
                 dontPlay = true;
             }
         }
         else {
             // Give option to provide input
-            if (ImGui::TreeNode("Selectables"))
-            {
-                if (ImGui::TreeNode(""))
-                ImGui::TreePop();
+            // Valence Drop Down
+            const char* itemsVal[] = {" ", "-2", "-1","0", "1", "2"};
+            const char* combo_labelVal = itemsVal[item_current_val];
+            if(ImGui::BeginCombo("Valence", combo_labelVal)){
+                for (int n = 0; n < IM_ARRAYSIZE(itemsVal); n++)
+                {
+                    const bool is_selected = (item_current_val == n);
+                    if (ImGui::Selectable(itemsVal[n], is_selected))
+                        item_current_val = n; // gives a value to the selection states
+                    if (is_selected)
+                        ImGui::SetItemDefaultFocus(); // focuses on item selected
+                }
+
+                // determine the valence value selected
+                switch(item_current_val)
+                {
+                    case 1:
+                        val = -2;
+                        break;
+                    case 2:
+                        val = -1;
+                        break;
+                    case 3:
+                        val = 0;
+                        break;
+                    case 4:
+                        val = 1;
+                        break;
+                    case 5:
+                        val = 2;
+                        break;
+                    default:
+                        // throw an error?
+                        val = 100; // this way I know this one does not count?
+                        break;
+                }
+
+                ImGui::EndCombo();
             }
-            
+            // Arousal Drop Down
+            const char* itemsArous[] = {" ", "-2", "-1","0", "1", "2"};
+            const char* combo_labelArous = itemsVal[item_current_val];
+            if(ImGui::BeginCombo("Arousal", combo_labelArous)){
+                for (int n = 0; n < IM_ARRAYSIZE(itemsArous); n++)
+                {
+                    const bool is_selected = (item_current_val == n);
+                    if (ImGui::Selectable(itemsVal[n], is_selected))
+                        item_current_val = n; // gives a value to the selection states
+                    if (is_selected)
+                        ImGui::SetItemDefaultFocus(); // focuses on item selected
+                }
+
+                // determine the valence value selected
+                switch(item_current_val)
+                {
+                    case 1:
+                        arous = -2;
+                        break;
+                    case 2:
+                        arous = -1;
+                        break;
+                    case 3:
+                        arous = 0;
+                        break;
+                    case 4:
+                        arous = 1;
+                        break;
+                    case 5:
+                        arous = 2;
+                        break;
+                    default:
+                        // throw an error?
+                        arous = 100; // this way I know this one does not count?
+                        break;
+                }
+                
+                ImGui::EndCombo();
+            }
             
             // Go to next cue
             if(ImGui::Button("Next")){
@@ -274,10 +350,13 @@ void trialScreen()
                 timeRespond = time1 - time1_old;
                 time1_old = time1;
                 // put in the excel sheet
-                file_name << count << "," << chordName << "," << sus << "," << amp << "," << "IsSim" << "," << "IsMajor" << ","
-                        << "Valence" << "," << "Arousal" << "," << "Time" << std::endl; // theoretically setting up headers
-        
+                file_name << count << ","; // track trial
+                file_name << currentChordNum << "," << sus << "," << amp << "," << isSim << "," << chordNew.getMajor() << ","; // gathers experimental paramaters
+                file_name << val << "," << arous << "," << timeRespond << std::endl; // gathers experimental input
 
+                // reset values for drop down list
+                item_current_val = 0;
+                item_current_arous = 0;
 
                 // shuffle the list if needed
                 int cue_num = count % 4;
