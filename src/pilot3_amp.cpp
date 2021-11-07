@@ -70,7 +70,7 @@ public:
     std::string fileLocal; // for storing the signal
     // For saving records
     int trial_num = 0; // counter for overall trials
-    int experiment_num = 5; // amount of trials in experiment
+    int experiment_num = 40; // amount of trials in experiment
     int val = 0, arous = 0;
     int final_trial_num = 6;
     // For playing the signal
@@ -406,7 +406,6 @@ void trialScreen()
         if(trial_num < final_trial_num) // if not final trial
         {
             screen_name = "trans_screen";
-            file_name.close();
         }
         else // if final trial
         {
