@@ -72,7 +72,7 @@ public:
     int trial_num = 0; // counter for overall trials
     int experiment_num = 5; // amount of trials in experiment
     int val = 0, arous = 0;
-    int final_trial_num = 5;
+    int final_trial_num = 6;
     // For playing the signal
     Clock play_clock; // keeping track of time for non-blocking pauses
     bool playTime = false;   // for knowing how long to play cues
@@ -81,6 +81,11 @@ public:
     double timeRespond;
     // The amplitudes in a vector
     std::vector<int> list = {0, 1, 2, 3};
+    // The base parameters for my chords
+    std::vector<int> chordList = {14, 15}; // for D Note
+    std::vector<int> susList = {0, 1, 2};
+    std::vector<int> baseChordList;
+    std::vector<int> baseSusList;
     // Vector for if play can be pressed
     bool dontPlay = false;
     bool first_in_trial = false;
@@ -156,6 +161,15 @@ void beginScreen()
 
             // Go to next screen
             screen_name = "trans_screen";
+
+            // Determine the parameters for base cue values********
+            static auto rng1 = std::default_random_engine {}; // for major or minor
+            std::shuffle(std::begin(chordList), std::end(chordList), rng1); 
+            baseChordList = {chordList[0], chordList[0], chordList[0], chordList[1], chordList[1], chordList[1]};
+            static auto rng2 = std::default_random_engine {};
+            std::shuffle(std::begin(susList), std::end(susList), rng2); 
+            baseSusList = {susList[0], susList[1], susList[2], susList[1], susList[2], susList[0]}; // psuedo randomization
+
         }
         ImGui::EndPopup();
     }
@@ -179,6 +193,8 @@ void transScreen()
         // Go to next screen
         screen_name = "trial_screen";
         // likely where I will be determining the base cue, trial number makes sense to code here
+        sus = baseSusList[trial_num];
+        currentChordNum = baseChordList[trial_num];
 
         // update trial number to make sense to me
         trial_num++; // this will be used to determine what are the characteristics held steady
@@ -216,7 +232,6 @@ void trialScreen()
 {
     // Set up the paramaters
     // Define the base cue paramaters
-    sus = 1;
     currentChord = chordNew.signal_list[currentChordNum];
     // for (size_t i = 0; i < 10; i++)
     // {
