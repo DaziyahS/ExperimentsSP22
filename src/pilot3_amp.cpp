@@ -69,12 +69,13 @@ public:
     std::string sigName; // name for saved signal
     std::string fileLocal; // for storing the signal
     // For saving records
-    int trial_num = 0;
+    int trial_num = 0; // counter for overall trials
+    int experiment_num = 5; // amount of trials in experiment
     int val = 0, arous = 0;
     int final_trial_num = 5;
     // For playing the signal
     Clock play_clock; // keeping track of time for non-blocking pauses
-    bool playTime = true;   // for knowing how long to play cues
+    bool playTime = false;   // for knowing how long to play cues
     // Set up timing within the trials itself
     Clock trial_clock;
     double timeRespond;
@@ -88,13 +89,12 @@ public:
     int item_current_arous = 0;
     int currentChordNum = 14;
     // for screens
-    std::string screen_name = "trial_screen";
-    int exp_num = 1;
+    std::string screen_name = "begin_screen";
 
     virtual void update() override
     {
         ImGui::Begin("Playing GUI");
-        ImGui::Text("The current experiment number is: %i", exp_num);
+        ImGui::Text("The current experiment number is: %i", trial_num);
         
         if (screen_name == "begin_screen")
         {
@@ -171,14 +171,18 @@ tell the person to talk to me, or give them more information
 */
 void transScreen()
 {
-    // update trial number
-    trial_num++; // this will be used to determine what are the characteristics held steady
-
+    
     // Write message for person
     ImGui::Text("Trial number is your intermediate screen.");
 
-    // Go to next screen
-    screen_name = "trial_screen";
+    if (ImGui::Button("Begin Next Experiment")){
+        // Go to next screen
+        screen_name = "trial_screen";
+        // likely where I will be determining the base cue, trial number makes sense to code here
+
+        // update trial number to make sense to me
+        trial_num++; // this will be used to determine what are the characteristics held steady
+    }
 }
 
 /*
@@ -236,7 +240,7 @@ void trialScreen()
         first_in_trial = false;
     }
     
-    if (count < 40){
+    if (count < experiment_num){
         if (!dontPlay){
             // Play the cue
             if(ImGui::Button("Play")){
@@ -255,24 +259,9 @@ void trialScreen()
 
                 // reset the play time clock 
                 play_clock.restart();
-                // allow for the play time to measured and pause to be enabled
+                // allow for the play time to be measured and pause to be enabled
                 playTime = true;
-
-                // Let the user know that they should feel something
-                ImGui::Text("The cue is currently playing.");
-                // Don't allow the user to press play again
-                dontPlay = true;
             }
-        }
-        // Dictate how long the signal plays
-        if (playTime)
-        {   
-            // if the signal time has passed, stop the signal on all channels
-            if(play_clock.get_elapsed_time().as_seconds() > channelSignals[0].length()){ // if whole signal is played
-                    s.stopAll();
-                    playTime = false; // do not reopen this until Play is pressed again
-                    trial_clock.restart(); // start recording the response time
-                }
         }
         else {
             // Give option to provide input
@@ -317,19 +306,19 @@ void trialScreen()
             }
             // Arousal Drop Down
             const char* itemsArous[] = {" ", "-2", "-1","0", "1", "2"};
-            const char* combo_labelArous = itemsVal[item_current_val];
+            const char* combo_labelArous = itemsArous[item_current_arous];
             if(ImGui::BeginCombo("Arousal", combo_labelArous)){
                 for (int n = 0; n < IM_ARRAYSIZE(itemsArous); n++)
                 {
-                    const bool is_selected = (item_current_val == n);
-                    if (ImGui::Selectable(itemsVal[n], is_selected))
-                        item_current_val = n; // gives a value to the selection states
+                    const bool is_selected = (item_current_arous == n);
+                    if (ImGui::Selectable(itemsArous[n], is_selected))
+                        item_current_arous = n; // gives a value to the selection states
                     if (is_selected)
                         ImGui::SetItemDefaultFocus(); // focuses on item selected
                 }
 
                 // determine the valence value selected
-                switch(item_current_val)
+                switch(item_current_arous)
                 {
                     case 1:
                         arous = -2;
@@ -377,7 +366,24 @@ void trialScreen()
                 // increase the list number
                 count++;
                 dontPlay = false;
+                std::cout << "count is " << count << std::endl; 
             }
+        }
+        // Dictate how long the signal plays
+        if (playTime)
+        {   
+            // Let the user know that they should feel something
+            ImGui::Text("The cue is currently playing.");
+            int cue_num = count % 4;
+            // if the signal time has passed, stop the signal on all channels
+            if(play_clock.get_elapsed_time().as_seconds() > channelSignals[0].length()){ // if whole signal is played
+                    s.stopAll();
+                    playTime = false; // do not reopen this until Play is pressed again
+                    trial_clock.restart(); // start recording the response time
+                    // Don't allow the user to press play again
+                    dontPlay = true;
+                    std::cout << list[cue_num] << " ";
+                }
         }
     }
     else // if trials are done
@@ -410,9 +416,6 @@ void endScreen()
 
 // actually open GUI
 int main() {
-    std::cout << "What is today's date followed by a letter of the alphabet?" << std::endl;
-    std::cin >> saveSubject;
-
     MyGui my_gui;
     my_gui.run();
     return 0;
