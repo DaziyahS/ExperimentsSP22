@@ -408,7 +408,7 @@ void trialScreen()
                             ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(5 / 7.0f, 0.3f, 0.3f));
                     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(5 / 7.0f, 0.6f, 0.6f));
                     ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(5 / 7.0f, 0.9f, 0.9f));
-                    if(ImGui::ImageButton((void *)(intptr_t)arousSAMs[i],buttonSizeSAMs))
+                    if(ImGui::ImageButton((void *)(intptr_t)arousSAMs[i-5],buttonSizeSAMs))
                     {
                         std::cout << i << std::endl;
                         pressed2 = i;
