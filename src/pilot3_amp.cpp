@@ -11,6 +11,7 @@
 // local includes
 #include <Chord.hpp>
 #include <Note.hpp> 
+#include <stb_image.h>
 
 // open the namespaces that are relevant for this code
 using namespace mahi::gui;
@@ -41,6 +42,57 @@ class MyGui : public Application
 {
     // Start by declaring the session variable
     tact::Session s; // this ensures the whole app knows this session
+private:
+ // Loading in of images
+        bool loadTextureFromFile(
+            const char *filename, GLuint *out_texture, int *out_width, int *out_height)
+            {
+                // Load from file
+                int image_width = 0;
+                int image_height = 0;
+                unsigned char *image_data = stbi_load(filename, &image_width, &image_height, NULL, 4);
+                if (image_data == NULL)
+                    return false;
+
+                // Create a OpenGL texture identifier
+                GLuint image_texture;
+                glGenTextures(1, &image_texture);
+                glBindTexture(GL_TEXTURE_2D, image_texture);
+
+                // Setup filtering parameters for display
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // This is required on WebGL for non power-of-two textures
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); // Same
+
+                // Upload pixels into texture
+                    #if defined(GL_UNPACK_ROW_LENGTH) && !defined(__EMSCRIPTEN__)
+                            glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+                    #endif
+                            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image_width, image_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data);
+                            stbi_image_free(image_data);
+
+                            *out_texture = image_texture;
+                            *out_width = image_width;
+                            *out_height = image_height;
+
+                            return true;
+            }
+    // simple wrapper to simplify importing images
+        bool loadIcon(const char *imgPath, GLuint *my_image_texture)
+            {
+                int my_image_width = 0;
+                int my_image_height = 0;
+                bool ret = loadTextureFromFile(imgPath, my_image_texture, &my_image_width, &my_image_height);
+                IM_ASSERT(ret);
+                return true;
+            }
+    // Define the variables for the SAMs
+    // Valence
+    GLuint valSAMs[5];
+    GLuint arousSAMs[5];
+    // Arousal
+
 public:
     // this is a constructor. It initializes your class to a specific state
     MyGui() : 
@@ -289,7 +341,8 @@ void trialScreen()
             }
             */
             // Give option to provide input
-            
+            ImGui::Image;
+            ImGui::ImageButton;
             // Valence Drop Down
             const char* itemsVal[] = {" ", "-2", "-1","0", "1", "2"};
             const char* combo_labelVal = itemsVal[item_current_val];
