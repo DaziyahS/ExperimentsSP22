@@ -281,7 +281,15 @@ void trialScreen()
             }
         }
         else {
+            // Valence SAMs
+            /*
+            if (ImGui::ImageButton(ImTextureID , buttonSizeSAMs))
+            {
+                val = -2;
+            }
+            */
             // Give option to provide input
+            
             // Valence Drop Down
             const char* itemsVal[] = {" ", "-2", "-1","0", "1", "2"};
             const char* combo_labelVal = itemsVal[item_current_val];
@@ -359,6 +367,7 @@ void trialScreen()
                 }
                 
                 ImGui::EndCombo();
+                
             }
             
             // Go to next cue
