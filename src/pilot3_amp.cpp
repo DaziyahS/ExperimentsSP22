@@ -91,6 +91,7 @@ private:
     // Valence
     GLuint valSAMs[5];
     GLuint arousSAMs[5];
+    std::string iconValues[5] = {"neg 2", "neg1", "0", "1", "2"};
     // Arousal
 
 public:
@@ -110,6 +111,13 @@ public:
 
         // so the current chord can play immediately
         currentChord = chordNew.signal_list[14];
+
+        // create the icons
+        for (int i = 0; i < 5; i++)
+        {
+            loadIcon(("../../Figures/val_" + iconValues[i] + ".png").c_str(), &valSAMs[i]);
+            loadIcon(("../../Figures/arous_" + iconValues[i] + ".png").c_str(), &arousSAMs[i]);
+        }
      }
 
     // Define variables needed throughout the program
