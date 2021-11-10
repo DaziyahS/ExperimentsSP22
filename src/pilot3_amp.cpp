@@ -342,7 +342,6 @@ void trialScreen()
         }
         else {
             // Valence SAMs
-            
             if (ImGui::ImageButton((void *)(intptr_t)valSAMs[0],buttonSizeSAMs))
             {
                 val = -2;
@@ -367,6 +366,34 @@ void trialScreen()
             {
                 val = 2;
             }
+
+            ImGui::Text("Arousal");
+            // Arousal SAMs
+            if (ImGui::ImageButton((void *)(intptr_t)arousSAMs[0],buttonSizeSAMs))
+            {
+                arous = -2;
+            }
+            ImGui::SameLine();
+            if (ImGui::ImageButton((void *)(intptr_t)arousSAMs[1],buttonSizeSAMs))
+            {
+                arous = -1;
+            }
+            ImGui::SameLine();
+            if (ImGui::ImageButton((void *)(intptr_t)arousSAMs[2],buttonSizeSAMs))
+            {
+                arous = 0;
+            }
+            ImGui::SameLine();
+            if (ImGui::ImageButton((void *)(intptr_t)arousSAMs[3],buttonSizeSAMs))
+            {
+                arous = 1;
+            }
+            ImGui::SameLine();
+            if (ImGui::ImageButton((void *)(intptr_t)arousSAMs[4],buttonSizeSAMs))
+            {
+                arous = 2;
+            }
+            
             
             // Valence Drop Down
             const char* itemsVal[] = {" ", "-2", "-1","0", "1", "2"};
