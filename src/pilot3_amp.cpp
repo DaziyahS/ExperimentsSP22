@@ -26,7 +26,7 @@ int windowHeight = 1080;
 std::string my_title= "Play GUI";
 ImVec2 buttonSizeBegin = ImVec2(400, 65);  // Size of buttons on begin & transition screen
 ImVec2 buttonSizeTrial = ImVec2(400, 65); // Size of buttons on trial scean
-ImVec2 buttonSizeSAMs = ImVec2(400, 400); // Size of SAMs buttons
+ImVec2 buttonSizeSAMs = ImVec2(100, 100); // Size of SAMs buttons
 int deviceNdx = 6;
 // tactors of interest
 int topTact = 4;
@@ -107,7 +107,7 @@ public:
         ImGui::GetIO().ConfigFlags &= ~ImGuiConfigFlags_ViewportsEnable;
         
         set_background(Cyans::Teal); //background_color = Grays::Black; 
-        flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse;
+        flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse;
 
         // so the current chord can play immediately
         currentChord = chordNew.signal_list[14];
@@ -342,15 +342,32 @@ void trialScreen()
         }
         else {
             // Valence SAMs
-            /*
-            if (ImGui::ImageButton(ImTextureID , buttonSizeSAMs))
+            
+            if (ImGui::ImageButton((void *)(intptr_t)valSAMs[0],buttonSizeSAMs))
             {
                 val = -2;
             }
-            */
-            // Give option to provide input
-            ImGui::Image;
-            ImGui::ImageButton;
+            ImGui::SameLine();
+            if (ImGui::ImageButton((void *)(intptr_t)valSAMs[1],buttonSizeSAMs))
+            {
+                val = -1;
+            }
+            ImGui::SameLine();
+            if (ImGui::ImageButton((void *)(intptr_t)valSAMs[2],buttonSizeSAMs))
+            {
+                val = 0;
+            }
+            ImGui::SameLine();
+            if (ImGui::ImageButton((void *)(intptr_t)valSAMs[3],buttonSizeSAMs))
+            {
+                val = 1;
+            }
+            ImGui::SameLine();
+            if (ImGui::ImageButton((void *)(intptr_t)valSAMs[4],buttonSizeSAMs))
+            {
+                val = 2;
+            }
+            
             // Valence Drop Down
             const char* itemsVal[] = {" ", "-2", "-1","0", "1", "2"};
             const char* combo_labelVal = itemsVal[item_current_val];
