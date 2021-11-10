@@ -10,8 +10,7 @@
 
 // local includes
 #include <Chord.hpp>
-#include <Note.hpp> // would this imply that the .cpp functionality is attached?
-// #include <notes_info.hpp> // probably do not need
+#include <Note.hpp> 
 
 // open the namespaces that are relevant for this code
 using namespace mahi::gui;
@@ -21,11 +20,12 @@ using tact::sleep;
 using tact::Sequence;
 
 // deteremine application variables
-int windowWidth = 1800; // 1920 x 1080 is screen dimensions
-int windowHeight = 1000;
+int windowWidth = 1920; // 1920 x 1080 is screen dimensions
+int windowHeight = 1080;
 std::string my_title= "Play GUI";
-ImVec2 buttonSize = ImVec2(400, 65);  // Size of buttons on GUI
-// std::string deviceNdx = "Speakers (USB Sound Device)"; // Put my device name or number, is for at home name
+ImVec2 buttonSizeBegin = ImVec2(400, 65);  // Size of buttons on begin & transition screen
+ImVec2 buttonSizeTrial = ImVec2(400, 65); // Size of buttons on trial scean
+ImVec2 buttonSizeSAMs = ImVec2(400, 400); // Size of SAMs buttons
 int deviceNdx = 6;
 // tactors of interest
 int topTact = 4;
@@ -52,13 +52,16 @@ public:
         // keep in mind, if use device name must also use the API
         // something the GUI needs *shrugs*
         ImGui::GetIO().ConfigFlags &= ~ImGuiConfigFlags_ViewportsEnable;
+        
         set_background(Cyans::Teal); //background_color = Grays::Black; 
+        flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse;
 
         // so the current chord can play immediately
         currentChord = chordNew.signal_list[14];
      }
 
     // Define variables needed throughout the program
+    ImGuiWindowFlags flags;
     // For creating the signal
     std::string currentChord; // holds name of current chord based on selection
     Chord chordNew;
@@ -98,8 +101,7 @@ public:
 
     virtual void update() override
     {
-        ImGui::Begin("Playing GUI");
-        ImGui::Text("The current experiment number is: %i", trial_num);
+        ImGui::Begin("", 0, flags);
         
         if (screen_name == "begin_screen")
         {
@@ -135,7 +137,7 @@ Press submit button
 void beginScreen()
 {
     // in case I can possibly make a new file this way!
-    if(ImGui::Button("Subject Number", buttonSize))
+    if(ImGui::Button("Subject Number", buttonSizeBegin))
     {
         ImGui::OpenPopup("subject_num"); // open a popup and name it for calling
         // This just needs its own space, no curlies for the if
