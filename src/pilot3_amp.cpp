@@ -115,8 +115,8 @@ public:
         // create the icons
         for (int i = 0; i < 5; i++)
         {
-            loadIcon(("../../Figures/val_" + iconValues[i] + ".png").c_str(), &valSAMs[i]);
             loadIcon(("../../Figures/arous_" + iconValues[i] + ".png").c_str(), &arousSAMs[i]);
+            loadIcon(("../../Figures/val_" + iconValues[i] + ".png").c_str(), &valSAMs[i]);
         }
      }
 
@@ -128,6 +128,8 @@ public:
     std::vector<tact::Signal> channelSignals;
     bool isSim = false; // default is sequential
     int amp, sus;
+    int pressed = -1;
+    int pressed2 = -1;
     // For saving the signal
     std::string sigName; // name for saved signal
     std::string fileLocal; // for storing the signal
@@ -341,138 +343,80 @@ void trialScreen()
             }
         }
         else {
-            // Valence SAMs
-            if (ImGui::ImageButton((void *)(intptr_t)valSAMs[0],buttonSizeSAMs))
+            ImGui::Text("Valence");
+            /*
+            for (int i = 0; i < 5; i++)
             {
-                val = -2;
-            }
-            ImGui::SameLine();
-            if (ImGui::ImageButton((void *)(intptr_t)valSAMs[1],buttonSizeSAMs))
-            {
-                val = -1;
-            }
-            ImGui::SameLine();
-            if (ImGui::ImageButton((void *)(intptr_t)valSAMs[2],buttonSizeSAMs))
-            {
-                val = 0;
-            }
-            ImGui::SameLine();
-            if (ImGui::ImageButton((void *)(intptr_t)valSAMs[3],buttonSizeSAMs))
-            {
-                val = 1;
-            }
-            ImGui::SameLine();
-            if (ImGui::ImageButton((void *)(intptr_t)valSAMs[4],buttonSizeSAMs))
-            {
-                val = 2;
-            }
-
-            ImGui::Text("Arousal");
-            // Arousal SAMs
-            if (ImGui::ImageButton((void *)(intptr_t)arousSAMs[0],buttonSizeSAMs))
-            {
-                arous = -2;
-            }
-            ImGui::SameLine();
-            if (ImGui::ImageButton((void *)(intptr_t)arousSAMs[1],buttonSizeSAMs))
-            {
-                arous = -1;
-            }
-            ImGui::SameLine();
-            if (ImGui::ImageButton((void *)(intptr_t)arousSAMs[2],buttonSizeSAMs))
-            {
-                arous = 0;
-            }
-            ImGui::SameLine();
-            if (ImGui::ImageButton((void *)(intptr_t)arousSAMs[3],buttonSizeSAMs))
-            {
-                arous = 1;
-            }
-            ImGui::SameLine();
-            if (ImGui::ImageButton((void *)(intptr_t)arousSAMs[4],buttonSizeSAMs))
-            {
-                arous = 2;
-            }
+                if (i > 0)
+                {
+                    ImGui::SameLine();
+                }
+                ImGui::PushID(i);
+                if (pressed == i)
+                {
+                    ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(5 / 7.0f, 0.8f, 0.8f));
+                }
+                else
+                {
+                    ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
+                }
+                // ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(i / 7.0f, 0.7f, 0.7f)); 
+                ImGui::Button("Click");
+                // if (ImGui::Button("Click")) //(ImGui::ImageButton((void *)(intptr_t)valSAMs[i],buttonSizeSAMs))
+                // {
+                //     pressed = i;
+                //     val = i - 2;
+                // } 
+                ImGui::PopStyleColor(3);
+                ImGui::PopID();
+            } */
             
-            
-            // Valence Drop Down
-            const char* itemsVal[] = {" ", "-2", "-1","0", "1", "2"};
-            const char* combo_labelVal = itemsVal[item_current_val];
-            if(ImGui::BeginCombo("Valence", combo_labelVal)){
-                for (int n = 0; n < IM_ARRAYSIZE(itemsVal); n++)
-                {
-                    const bool is_selected = (item_current_val == n);
-                    if (ImGui::Selectable(itemsVal[n], is_selected))
-                        item_current_val = n; // gives a value to the selection states
-                    if (is_selected)
-                        ImGui::SetItemDefaultFocus(); // focuses on item selected
+            for (int i = 0; i < 10; i++)
+            {
+                if (i < 5)
+                {    
+                    if (i > 0)
+                    {
+                        ImGui::SameLine();
+                    }
+                    ImGui::PushID(i);
+                        if (pressed == i){
+                            ImGui::PushStyleColor(ImGuiCol_Button,(ImVec4)ImColor::HSV(5 / 7.0f, 0.8f, 0.8f));
+                        }
+                        else
+                            ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(5 / 7.0f, 0.3f, 0.3f));
+                    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(5 / 7.0f, 0.6f, 0.6f));
+                    ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(5 / 7.0f, 0.9f, 0.9f));
+                    if(ImGui::ImageButton((void *)(intptr_t)valSAMs[i],buttonSizeSAMs))
+                    {
+                        std::cout << i << std::endl;
+                        pressed = i;
+                        val = pressed - 2;
+                    };
                 }
-
-                // determine the valence value selected
-                switch(item_current_val)
+                else
                 {
-                    case 1:
-                        val = -2;
-                        break;
-                    case 2:
-                        val = -1;
-                        break;
-                    case 3:
-                        val = 0;
-                        break;
-                    case 4:
-                        val = 1;
-                        break;
-                    case 5:
-                        val = 2;
-                        break;
-                    default:
-                        // throw an error?
-                        val = 100; // this way I know this one does not count?
-                        break;
+                    if (i > 5)
+                    {
+                        ImGui::SameLine();
+                    }
+                    ImGui::PushID(i);
+                        if (pressed2 == i){
+                            ImGui::PushStyleColor(ImGuiCol_Button,(ImVec4)ImColor::HSV(5 / 7.0f, 0.8f, 0.8f));
+                        }
+                        else
+                            ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(5 / 7.0f, 0.3f, 0.3f));
+                    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(5 / 7.0f, 0.6f, 0.6f));
+                    ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(5 / 7.0f, 0.9f, 0.9f));
+                    if(ImGui::ImageButton((void *)(intptr_t)arousSAMs[i],buttonSizeSAMs))
+                    {
+                        std::cout << i << std::endl;
+                        pressed2 = i;
+                        arous = pressed2 - 7;
+                    };  
                 }
-
-                ImGui::EndCombo();
-            }
-            // Arousal Drop Down
-            const char* itemsArous[] = {" ", "-2", "-1","0", "1", "2"};
-            const char* combo_labelArous = itemsArous[item_current_arous];
-            if(ImGui::BeginCombo("Arousal", combo_labelArous)){
-                for (int n = 0; n < IM_ARRAYSIZE(itemsArous); n++)
-                {
-                    const bool is_selected = (item_current_arous == n);
-                    if (ImGui::Selectable(itemsArous[n], is_selected))
-                        item_current_arous = n; // gives a value to the selection states
-                    if (is_selected)
-                        ImGui::SetItemDefaultFocus(); // focuses on item selected
-                }
-
-                // determine the valence value selected
-                switch(item_current_arous)
-                {
-                    case 1:
-                        arous = -2;
-                        break;
-                    case 2:
-                        arous = -1;
-                        break;
-                    case 3:
-                        arous = 0;
-                        break;
-                    case 4:
-                        arous = 1;
-                        break;
-                    case 5:
-                        arous = 2;
-                        break;
-                    default:
-                        // throw an error?
-                        arous = 100; // this way I know this one does not count?
-                        break;
-                }
-                
-                ImGui::EndCombo();
-                
+                ImGui::PopStyleColor(3);
+                ImGui::PopID();
             }
             
             // Go to next cue
@@ -486,8 +430,8 @@ void trialScreen()
                 file_name << val << "," << arous << "," << timeRespond << std::endl; // gathers experimental input
 
                 // reset values for drop down list
-                item_current_val = 0;
-                item_current_arous = 0;
+                pressed = -1;
+                pressed2 = -1;
 
                 // shuffle the amplitude list if needed
                 int cue_num = count % 4;
