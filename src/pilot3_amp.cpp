@@ -91,7 +91,7 @@ private:
     // Valence
     GLuint valSAMs[5];
     GLuint arousSAMs[5];
-    std::string iconValues[5] = {"neg 2", "neg1", "0", "1", "2"};
+    std::string iconValues[5] = {"neg2", "neg1", "0", "1", "2"};
     // Arousal
 
 public:
@@ -239,19 +239,16 @@ void beginScreen()
     }
 }
 
-/*
-// transition screen
-update trial number
-make sure the excel file is being created for the following trials
-    create new name for new excel file based on subject number and trial number
-write the first line of the excel file
-tell the person to talk to me, or give them more information
-*/
 void transScreen()
 {
     
     // Write message for person
-    ImGui::Text("Trial number is your intermediate screen.");
+    ImGui::Text("During the following experiment, you will receive a haptic cue and be asked");
+    ImGui::Text("to rate its emotional quality on two spectrums, valence and arousal. For reference,");
+    ImGui::Text("valence refers to how positive and negative the emotion is and arousal refers to");
+    ImGui::Text("the alertness of the emotion.");
+    ImGui::Text(" ");
+    ImGui::Text("When you are ready to begin the next trial, press the button below.");
 
     if (ImGui::Button("Begin Next Experiment")){
         // Go to next screen
@@ -265,45 +262,11 @@ void transScreen()
     }
 }
 
-/*
-// trial 1
-include information for timestamp
-set up the parameters
-    define the base cue parameters
-randomize the amplitudes wanted into a vector
-    math to determine trials: 10 minute session, 15 seconds to choose, 600 s / 15 s = 40 trials
-    create vector of length 40 with 10 of each amplitude option
-    randomize the vector
-display
-    display each of the SAMs with their numbers
-    have a drop down for person to choose which OR have them have buttons underneath them (must hold value chose visibly)
-        updates the valence and arousal values
-press button
-    if not at end of vector
-        record the data
-        reset the values of the valence and arousal display
-        increase the trial iterator
-    else if end of vector && not at max trial
-        record the data
-        go to transition screen
-        reset the trial iterator
-        increase the experiment number
-    else // aka at max trial number
-        record the data
-        go to end of experiment screen
-*/
 void trialScreen()
 {
     // Set up the paramaters
     // Define the base cue paramaters
     currentChord = chordNew.signal_list[currentChordNum];
-    // for (size_t i = 0; i < 10; i++)
-    // {
-    //     for (size_t j = 0; j < 4; j++)
-    //     {
-    //         list.push_back(j);
-    //     }    
-    // }
 
     // internal trial tracker
     static int count = 0;
@@ -344,32 +307,6 @@ void trialScreen()
         }
         else {
             ImGui::Text("Valence");
-            /*
-            for (int i = 0; i < 5; i++)
-            {
-                if (i > 0)
-                {
-                    ImGui::SameLine();
-                }
-                ImGui::PushID(i);
-                if (pressed == i)
-                {
-                    ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(5 / 7.0f, 0.8f, 0.8f));
-                }
-                else
-                {
-                    ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
-                }
-                // ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(i / 7.0f, 0.7f, 0.7f)); 
-                ImGui::Button("Click");
-                // if (ImGui::Button("Click")) //(ImGui::ImageButton((void *)(intptr_t)valSAMs[i],buttonSizeSAMs))
-                // {
-                //     pressed = i;
-                //     val = i - 2;
-                // } 
-                ImGui::PopStyleColor(3);
-                ImGui::PopID();
-            } */
             
             for (int i = 0; i < 10; i++)
             {
@@ -475,11 +412,6 @@ void trialScreen()
     }    
 }
 
-/*
-// end of experiment screen
-blank?
-All done. Thank you for your participation
-*/
 void endScreen()
 {
     ImGui::Text("Thank you for your participation!");
@@ -494,53 +426,3 @@ int main() {
     my_gui.run();
     return 0;
 } 
-
-/*
-
-Let's do a fake code
-
-// beginning screen
-Subject Number Prompt
-Input Subject Number
-Press submit button
-    store the subject number
-    create an excel file based on the subject number
-
-// transition screen
-update trial number
-make sure the excel file is being created for the following trials
-    create new name for new excel file based on subject number and trial number
-write the first line of the excel file
-tell the person to talk to me, or give them more information
-
-// trial 1
-include information for timestamp
-set up the parameters
-    define the base cue parameters
-randomize the amplitudes wanted into a vector
-    math to determine trials: 10 minute session, 15 seconds to choose, 600 s / 15 s = 40 trials
-    create vector of length 40 with 10 of each amplitude option
-    randomize the vector
-display
-    display each of the SAMs with their numbers
-    have a drop down for person to choose which OR have them have buttons underneath them (must hold value chose visibly)
-        updates the valence and arousal values
-press button
-    if not at end of vector
-        record the data
-        reset the values of the valence and arousal display
-        increase the trial iterator
-    else if end of vector && not at max trial
-        record the data
-        go to transition screen
-        reset the trial iterator
-        increase the experiment number
-    else // aka at max trial number
-        record the data
-        go to end of experiment screen
-
-// end of experiment screen
-blank?
-All done. Thank you for your participation
-
-*/
