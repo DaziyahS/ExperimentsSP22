@@ -244,9 +244,9 @@ void transScreen()
     
     // Write message for person
     ImGui::Text("During the following experiment, you will receive a haptic cue and be asked");
-    ImGui::Text("to rate its emotional quality on two spectrums, valence and arousal. For reference,");
-    ImGui::Text("valence refers to how positive and negative the emotion is and arousal refers to");
-    ImGui::Text("the alertness of the emotion.");
+    ImGui::Text("to rate it on two dimensions of emotion (valence and arousal). For reference,");
+    ImGui::Text("valence measures pleasantness (from negative to positive), while arousal measures");
+    ImGui::Text("bodily activation (low to high energy).");
     ImGui::Text(" ");
     ImGui::Text("When you are ready to begin the next trial, press the button below.");
 
@@ -259,6 +259,24 @@ void transScreen()
 
         // update trial number to make sense to me
         trial_num++; // this will be used to determine what are the characteristics held steady
+
+        // Start playing cue as enter the trial
+        int cue_num = 0;
+        // determine what is the amp
+        amp = list[cue_num];
+        // create the cue
+        chordNew = Chord(currentChord, sus, amp, isSim);
+        // determine the values for each channel
+        channelSignals = chordNew.playValues();
+        // play_trial(cue_num);
+        s.play(leftTact, channelSignals[0]);
+        s.play(botTact, channelSignals[1]); 
+        s.play(rightTact, channelSignals[2]); 
+
+        // reset the play time clock 
+        play_clock.restart();
+        // allow for the play time to be measured and pause to be enabled
+        playTime = true;
     }
 }
 
@@ -284,26 +302,7 @@ void trialScreen()
     
     if (count < experiment_num){
         if (!dontPlay){
-            // Play the cue
-            if(ImGui::Button("Play")){
-                // determine which part of the list should be used
-                int cue_num = count%4;
-                // determine what is the amp
-                amp = list[cue_num];
-                // create the cue
-                chordNew = Chord(currentChord, sus, amp, isSim);
-                // determine the values for each channel
-                channelSignals = chordNew.playValues();
-                // play_trial(cue_num);
-                s.play(leftTact, channelSignals[0]);
-                s.play(botTact, channelSignals[1]); 
-                s.play(rightTact, channelSignals[2]); 
-
-                // reset the play time clock 
-                play_clock.restart();
-                // allow for the play time to be measured and pause to be enabled
-                playTime = true;
-            }
+            
         }
         else {
             ImGui::Text("Valence");
@@ -379,6 +378,25 @@ void trialScreen()
                 count++;
                 dontPlay = false;
                 std::cout << "count is " << count << std::endl; 
+
+                // Play the next cue for listening purposes
+                // determine which part of the list should be used
+                cue_num = count%4;
+                // determine what is the amp
+                amp = list[cue_num];
+                // create the cue
+                chordNew = Chord(currentChord, sus, amp, isSim);
+                // determine the values for each channel
+                channelSignals = chordNew.playValues();
+                // play_trial(cue_num);
+                s.play(leftTact, channelSignals[0]);
+                s.play(botTact, channelSignals[1]); 
+                s.play(rightTact, channelSignals[2]); 
+
+                // reset the play time clock 
+                play_clock.restart();
+                // allow for the play time to be measured and pause to be enabled
+                playTime = true;
             }
         }
         // Dictate how long the signal plays
