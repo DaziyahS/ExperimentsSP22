@@ -135,7 +135,7 @@ public:
     std::string fileLocal; // for storing the signal
     // For saving records
     int trial_num = 0; // counter for overall trials
-    int experiment_num = 40; // amount of trials in experiment
+    int experiment_num = 5; // amount of trials in experiment
     int val = 0, arous = 0;
     int final_trial_num = 6;
     // For playing the signal
@@ -317,10 +317,10 @@ void trialScreen()
                     }
                     ImGui::PushID(i);
                         if (pressed == i){
-                            ImGui::PushStyleColor(ImGuiCol_Button,(ImVec4)ImColor::HSV(5 / 7.0f, 0.8f, 0.8f));
+                            ImGui::PushStyleColor(ImGuiCol_Button,ImVec4(1.0f, 1.0f, 0.0f, 1.0f));
                         }
                         else
-                            ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(5 / 7.0f, 0.3f, 0.3f));
+                            ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(1 / 7.0f, 0.3f, 0.3f));
                     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(5 / 7.0f, 0.6f, 0.6f));
                     ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(5 / 7.0f, 0.9f, 0.9f));
                     if(ImGui::ImageButton((void *)(intptr_t)valSAMs[i],buttonSizeSAMs))
@@ -336,9 +336,13 @@ void trialScreen()
                     {
                         ImGui::SameLine();
                     }
+                    else
+                    {
+                        ImGui::Text("Arousal");
+                    }
                     ImGui::PushID(i);
                         if (pressed2 == i){
-                            ImGui::PushStyleColor(ImGuiCol_Button,(ImVec4)ImColor::HSV(5 / 7.0f, 0.8f, 0.8f));
+                            ImGui::PushStyleColor(ImGuiCol_Button,ImVec4(1.0f, 1.0f, 0.0f, 1.0f));
                         }
                         else
                             ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(5 / 7.0f, 0.3f, 0.3f));
@@ -378,25 +382,28 @@ void trialScreen()
                 count++;
                 dontPlay = false;
                 std::cout << "count is " << count << std::endl; 
+                
+                if(count < experiment_num) // if not final trial
+                {
+                    // Play the next cue for listening purposes
+                    // determine which part of the list should be used
+                    cue_num = count%4;
+                    // determine what is the amp
+                    amp = list[cue_num];
+                    // create the cue
+                    chordNew = Chord(currentChord, sus, amp, isSim);
+                    // determine the values for each channel
+                    channelSignals = chordNew.playValues();
+                    // play_trial(cue_num);
+                    s.play(leftTact, channelSignals[0]);
+                    s.play(botTact, channelSignals[1]); 
+                    s.play(rightTact, channelSignals[2]); 
 
-                // Play the next cue for listening purposes
-                // determine which part of the list should be used
-                cue_num = count%4;
-                // determine what is the amp
-                amp = list[cue_num];
-                // create the cue
-                chordNew = Chord(currentChord, sus, amp, isSim);
-                // determine the values for each channel
-                channelSignals = chordNew.playValues();
-                // play_trial(cue_num);
-                s.play(leftTact, channelSignals[0]);
-                s.play(botTact, channelSignals[1]); 
-                s.play(rightTact, channelSignals[2]); 
-
-                // reset the play time clock 
-                play_clock.restart();
-                // allow for the play time to be measured and pause to be enabled
-                playTime = true;
+                    // reset the play time clock 
+                    play_clock.restart();
+                    // allow for the play time to be measured and pause to be enabled
+                    playTime = true;      
+                }   
             }
         }
         // Dictate how long the signal plays
