@@ -24,9 +24,9 @@ using tact::Sequence;
 int windowWidth = 1920; // 1920 x 1080 is screen dimensions
 int windowHeight = 1080;
 std::string my_title= "Play GUI";
-ImVec2 buttonSizeBegin = ImVec2(400, 65);  // Size of buttons on begin & transition screen
+ImVec2 buttonSizeBegin = ImVec2(800, 65);  // Size of buttons on begin & transition screen
 ImVec2 buttonSizeTrial = ImVec2(400, 65); // Size of buttons on trial scean
-ImVec2 buttonSizeSAMs = ImVec2(100, 100); // Size of SAMs buttons
+ImVec2 buttonSizeSAMs = ImVec2(150, 150); // Size of SAMs buttons
 int deviceNdx = 6;
 // tactors of interest
 int topTact = 4;
@@ -163,7 +163,7 @@ public:
 
     virtual void update() override
     {
-        ImGui::Begin("", 0, flags);
+        ImGui::BeginFixed("", {50,50}, {(float)windowWidth-100, (float)windowHeight-100}, flags);
         
         if (screen_name == "begin_screen")
         {
@@ -198,6 +198,15 @@ Press submit button
 */
 void beginScreen()
 {
+    // give space to breathe
+    ImGui::NewLine();
+    ImGui::NewLine();
+    ImGui::NewLine();
+    ImGui::NewLine();
+
+    // center the object
+    ImGui::SameLine((float)((windowWidth-100)/2)-400);
+
     // in case I can possibly make a new file this way!
     if(ImGui::Button("Subject Number", buttonSizeBegin))
     {
@@ -249,8 +258,17 @@ void transScreen()
     ImGui::Text("bodily activation (low to high energy).");
     ImGui::Text(" ");
     ImGui::Text("When you are ready to begin the next trial, press the button below.");
+    
+    // give space to breathe
+    ImGui::NewLine();
+    ImGui::NewLine();
+    ImGui::NewLine();
+    ImGui::NewLine();
 
-    if (ImGui::Button("Begin Next Experiment")){
+    // center the object
+    ImGui::SameLine((float)((windowWidth-100)/2)-400);
+
+    if (ImGui::Button("Begin Next Experiment",buttonSizeBegin)){
         // Go to next screen
         screen_name = "trial_screen";
         // likely where I will be determining the base cue, trial number makes sense to code here
@@ -298,6 +316,7 @@ void trialScreen()
         count = 0;
         // set first_in_trial to false so initial randomization can happen once
         first_in_trial = false;
+        std::cout << "Current trial number is " << trial_num << std::endl;
     }
     
     if (count < experiment_num){
@@ -325,7 +344,6 @@ void trialScreen()
                     ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(5 / 7.0f, 0.9f, 0.9f));
                     if(ImGui::ImageButton((void *)(intptr_t)valSAMs[i],buttonSizeSAMs, ImVec2(0,0), ImVec2(1,1), 5))
                     {
-                        std::cout << i << std::endl;
                         pressed = i;
                         val = pressed - 2;
                     };
@@ -350,7 +368,6 @@ void trialScreen()
                     ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(5 / 7.0f, 0.9f, 0.9f));
                     if(ImGui::ImageButton((void *)(intptr_t)arousSAMs[i-5],buttonSizeSAMs, ImVec2(0,0), ImVec2(1,1), 5))
                     {
-                        std::cout << i << std::endl;
                         pressed2 = i;
                         arous = pressed2 - 7;
                     };  
@@ -359,8 +376,11 @@ void trialScreen()
                 ImGui::PopID();
             }
             
+            ImGui::NewLine();
+            ImGui::NewLine();
+            ImGui::SameLine(205);
             // Go to next cue
-            if(ImGui::Button("Next")){
+            if(ImGui::Button("Next",buttonSizeTrial)){
                 // Record the answers
                 // timestamp information**********
                 timeRespond = trial_clock.get_elapsed_time().as_seconds(); // get response time
@@ -381,7 +401,6 @@ void trialScreen()
                 // increase the list number
                 count++;
                 dontPlay = false;
-                std::cout << "count is " << count << std::endl; 
                 
                 if(count < experiment_num) // if not final trial
                 {
@@ -419,7 +438,6 @@ void trialScreen()
                     trial_clock.restart(); // start recording the response time
                     // Don't allow the user to press play again
                     dontPlay = true;
-                    std::cout << list[cue_num] << " ";
                 }
         }
     }
