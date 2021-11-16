@@ -27,7 +27,7 @@ std::string my_title= "Play GUI";
 ImVec2 buttonSizeBegin = ImVec2(800, 65);  // Size of buttons on begin & transition screen
 ImVec2 buttonSizeTrial = ImVec2(400, 65); // Size of buttons on trial scean
 ImVec2 buttonSizeSAMs = ImVec2(150, 150); // Size of SAMs buttons
-int deviceNdx = 6;
+int deviceNdx = 5;
 // tactors of interest
 int topTact = 4;
 int botTact = 6;
