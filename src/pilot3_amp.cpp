@@ -207,7 +207,6 @@ void beginScreen()
     // center the object
     ImGui::SameLine((float)((windowWidth-100)/2)-400);
 
-    // in case I can possibly make a new file this way!
     if(ImGui::Button("Subject Number", buttonSizeBegin))
     {
         ImGui::OpenPopup("subject_num"); // open a popup and name it for calling
@@ -382,47 +381,61 @@ void trialScreen()
             // Go to next cue
             if(ImGui::Button("Next",buttonSizeTrial)){
                 // Record the answers
-                // timestamp information**********
-                timeRespond = trial_clock.get_elapsed_time().as_seconds(); // get response time
-                // put in the excel sheet
-                file_name << count << ","; // track trial
-                file_name << currentChordNum << "," << sus << "," << amp << "," << isSim << "," << chordNew.getMajor() << ","; // gathers experimental paramaters
-                file_name << val << "," << arous << "," << timeRespond << std::endl; // gathers experimental input
-
-                // reset values for drop down list
-                pressed = -1;
-                pressed2 = -1;
-
-                // shuffle the amplitude list if needed
-                int cue_num = count % 4;
-                if (cue_num == 3){
-                    std::shuffle(std::begin(list), std::end(list), rng);            
-                }
-                // increase the list number
-                count++;
-                dontPlay = false;
-                
-                if(count < experiment_num) // if not final trial
+                if (pressed > 0 && pressed2 > 0)
                 {
-                    // Play the next cue for listening purposes
-                    // determine which part of the list should be used
-                    cue_num = count%4;
-                    // determine what is the amp
-                    amp = list[cue_num];
-                    // create the cue
-                    chordNew = Chord(currentChord, sus, amp, isSim);
-                    // determine the values for each channel
-                    channelSignals = chordNew.playValues();
-                    // play_trial(cue_num);
-                    s.play(leftTact, channelSignals[0]);
-                    s.play(botTact, channelSignals[1]); 
-                    s.play(rightTact, channelSignals[2]); 
+                    // timestamp information**********
+                    timeRespond = trial_clock.get_elapsed_time().as_seconds(); // get response time
+                    // put in the excel sheet
+                    file_name << count << ","; // track trial
+                    file_name << currentChordNum << "," << sus << "," << amp << "," << isSim << "," << chordNew.getMajor() << ","; // gathers experimental paramaters
+                    file_name << val << "," << arous << "," << timeRespond << std::endl; // gathers experimental input
 
-                    // reset the play time clock 
-                    play_clock.restart();
-                    // allow for the play time to be measured and pause to be enabled
-                    playTime = true;      
-                }   
+                    // reset values for drop down list
+                    pressed = -1;
+                    pressed2 = -1;
+
+                    // shuffle the amplitude list if needed
+                    int cue_num = count % 4;
+                    if (cue_num == 3){
+                        std::shuffle(std::begin(list), std::end(list), rng);            
+                    }
+                    // increase the list number
+                    count++;
+                    dontPlay = false;
+                    
+                    if(count < experiment_num) // if not final trial
+                    {
+                        // Play the next cue for listening purposes
+                        // determine which part of the list should be used
+                        cue_num = count%4;
+                        // determine what is the amp
+                        amp = list[cue_num];
+                        // create the cue
+                        chordNew = Chord(currentChord, sus, amp, isSim);
+                        // determine the values for each channel
+                        channelSignals = chordNew.playValues();
+                        // play_trial(cue_num);
+                        s.play(leftTact, channelSignals[0]);
+                        s.play(botTact, channelSignals[1]); 
+                        s.play(rightTact, channelSignals[2]); 
+
+                        // reset the play time clock 
+                        play_clock.restart();
+                        // allow for the play time to be measured and pause to be enabled
+                        playTime = true;      
+                    }   
+                }
+                else
+                {
+                    ImGui::OpenPopup("Error");
+                }
+            }
+            if(ImGui::BeginPopup("Error")){
+                ImGui::Text("Please make both a valence and arousal selection before continuing.");
+                if(ImGui::Button("Close"))
+                {
+                    ImGui::CloseCurrentPopup();
+                }
             }
         }
         // Dictate how long the signal plays
