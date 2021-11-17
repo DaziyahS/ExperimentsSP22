@@ -24,6 +24,32 @@ arousGROUP = arousValues; % variable of interest
 [valD, valP, valSTATS] = manova1(X, valGROUP); 
 [arousD, arousP, arousSTATS] = manova1(X, arousGROUP); 
 
+%% Fudge the Data with ANOVA
+
+count = 1;
+major11 = zeros(10,2);
+for ind = 1 : 240
+   if susValues(ind) ==  1
+       if ampValues(ind) == 1
+          major11(count, :) = [majorValues(ind) valValues(ind)];
+       end       
+   end 
+end
+
+P1 = anova1(major11)
+
+count = 1;
+major11_2 = zeros(10,2);
+for ind = 241 : 480
+   if susValues(ind) ==  1
+       if ampValues(ind) == 1
+          major11_2(count, :) = [majorValues(ind) valValues(ind)];
+       end       
+   end 
+end
+
+P2 = anova1(major11_2)
+
 %% Determine the Means
 
 % Find the means for each data set
