@@ -44,13 +44,13 @@ void Chord::createNotes(){
         switch(amplitude_)
         {
             case 1: // medium-high amplitude
-                sigAmp = 0.8;
+                sigAmp = 0.75;
                 break;
             case 2: // medium amplitude
                 sigAmp = 0.5;
                 break;
             case 3: // low amplitude
-                sigAmp = 0.3;
+                sigAmp = 0.25;
                 break;
 
             default: // full amplitude
