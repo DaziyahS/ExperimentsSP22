@@ -8,6 +8,14 @@
 #include <chrono> 
 #include <string> // for manipulating file name
 
+%%
+/*
+QUESTIONNNNN    
+What if the only change I need to make to pilot3_amp is calling
+a different version of the function to make the cues and the actual
+adjustments would happen inside the chord function... QTNA
+*/
+
 // open the namespaces that are relevant for this code
 using namespace mahi::gui;
 using namespace mahi::util;
