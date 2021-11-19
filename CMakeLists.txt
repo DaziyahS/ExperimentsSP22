@@ -49,6 +49,12 @@ target_link_libraries(amp syntacts)
 target_link_libraries(amp mahi::util)
 target_link_libraries(amp mahi::gui)
 
+# create an executable from pilot3_amp.cpp and link it to wanted libraries
+add_executable(adjust src/pilot3_adjustamps.cpp src/Chord.cpp src/Note.cpp)
+target_link_libraries(adjust syntacts)
+target_link_libraries(adjust mahi::util)
+target_link_libraries(adjust mahi::gui)
+
 # # create an executable from pilot2_twosignals.cpp and link it to wanted libraries
 # add_executable(major src/pilot3_major.cpp src/Chord.cpp src/Note.cpp)
 # target_link_libraries(major syntacts)
