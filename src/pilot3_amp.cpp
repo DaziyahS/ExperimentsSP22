@@ -339,7 +339,7 @@ void trialScreen()
                         }
                         else
                             ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(1 / 7.0f, 0.3f, 0.3f));
-                    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(5 / 7.0f, 0.6f, 0.6f));
+                    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(2 / 7.0f, 0.6f, 0.6f));
                     ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(5 / 7.0f, 0.9f, 0.9f));
                     if(ImGui::ImageButton((void *)(intptr_t)valSAMs[i],buttonSizeSAMs, ImVec2(0,0), ImVec2(1,1), 5))
                     {
@@ -362,8 +362,8 @@ void trialScreen()
                             ImGui::PushStyleColor(ImGuiCol_Button,ImVec4(1.0f, 1.0f, 0.0f, 1.0f));
                         }
                         else
-                            ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(5 / 7.0f, 0.3f, 0.3f));
-                    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(5 / 7.0f, 0.6f, 0.6f));
+                            ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(1 / 7.0f, 0.3f, 0.3f));
+                    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(2 / 7.0f, 0.6f, 0.6f));
                     ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(5 / 7.0f, 0.9f, 0.9f));
                     if(ImGui::ImageButton((void *)(intptr_t)arousSAMs[i-5],buttonSizeSAMs, ImVec2(0,0), ImVec2(1,1), 5))
                     {
