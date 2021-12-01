@@ -22,6 +22,7 @@ struct Chord
         bool isSimultaneous_; // holds info of which type of sequence
         // variables needed for internal functions
         std::vector<Note> notes_;
+        std::vector<Note> notesMod_;
         tact::Signal envelope;
         double sigAmp;
         bool isMajor_; // if 1 then it is major
@@ -35,6 +36,7 @@ struct Chord
 
         // create a function to play the values
         std::vector<tact::Signal> playValues();
+        std::vector<tact::Signal> playValuesMod();
 
         void createNotes();
         bool Chord::getMajor();
