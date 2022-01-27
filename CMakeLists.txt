@@ -67,6 +67,12 @@ target_link_libraries(majamp syntacts)
 target_link_libraries(majamp mahi::util)
 target_link_libraries(majamp mahi::gui)
 
+# create an executable from pilot5_real.cpp and link it to wanted libraries
+add_executable(psuedo src/pilot5_real.cpp src/Chord.cpp src/Note.cpp)
+target_link_libraries(psuedo syntacts)
+target_link_libraries(psuedo mahi::util)
+target_link_libraries(psuedo mahi::gui)
+
 # # create an executable from pilot2_twosignals.cpp and link it to wanted libraries
 # add_executable(major src/pilot3_major.cpp src/Chord.cpp src/Note.cpp)
 # target_link_libraries(major syntacts)
