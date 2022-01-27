@@ -55,6 +55,18 @@ target_link_libraries(adjust syntacts)
 target_link_libraries(adjust mahi::util)
 target_link_libraries(adjust mahi::gui)
 
+# create an executable from pilot4_majorsus.cpp and link it to wanted libraries
+add_executable(majsus src/pilot4_majorsus.cpp src/Chord.cpp src/Note.cpp)
+target_link_libraries(majsus syntacts)
+target_link_libraries(majsus mahi::util)
+target_link_libraries(majsus mahi::gui)
+
+# create an executable from pilot4_majoramp.cpp and link it to wanted libraries
+add_executable(majamp src/pilot4_majoramp.cpp src/Chord.cpp src/Note.cpp)
+target_link_libraries(majamp syntacts)
+target_link_libraries(majamp mahi::util)
+target_link_libraries(majamp mahi::gui)
+
 # # create an executable from pilot2_twosignals.cpp and link it to wanted libraries
 # add_executable(major src/pilot3_major.cpp src/Chord.cpp src/Note.cpp)
 # target_link_libraries(major syntacts)
