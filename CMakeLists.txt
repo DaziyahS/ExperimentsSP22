@@ -31,38 +31,8 @@ FetchContent_MakeAvailable(syntacts)
 # target_link_libraries(myApp mahi::util)
 # target_link_libraries(myApp mahi::gui)
 
-# create an executable from pilot2_twosignals.cpp and link it to wanted libraries
-add_executable(seqsim src/pilot2_seqsim.cpp src/Chord.cpp src/Note.cpp)
-target_link_libraries(seqsim syntacts)
-target_link_libraries(seqsim mahi::util)
-target_link_libraries(seqsim mahi::gui)
-
-# create an executable from pilot3_manual.cpp and link it to wanted libraries
-add_executable(manual src/pilot3_manual.cpp src/Chord.cpp src/Note.cpp)
-target_link_libraries(manual syntacts)
-target_link_libraries(manual mahi::util)
-target_link_libraries(manual mahi::gui)
-
-# create an executable from pilot3_amp.cpp and link it to wanted libraries
-add_executable(amp src/pilot3_amp.cpp src/Chord.cpp src/Note.cpp)
-target_link_libraries(amp syntacts)
-target_link_libraries(amp mahi::util)
-target_link_libraries(amp mahi::gui)
-
-# create an executable from pilot3_amp.cpp and link it to wanted libraries
-add_executable(adjust src/pilot3_adjustamps.cpp src/Chord.cpp src/Note.cpp)
-target_link_libraries(adjust syntacts)
-target_link_libraries(adjust mahi::util)
-target_link_libraries(adjust mahi::gui)
-
-# # create an executable from pilot2_twosignals.cpp and link it to wanted libraries
-# add_executable(major src/pilot3_major.cpp src/Chord.cpp src/Note.cpp)
-# target_link_libraries(major syntacts)
-# target_link_libraries(major mahi::util)
-# target_link_libraries(major mahi::gui)
-
-# # create an executable from main.cpp and link it to wanted libraries
-# add_executable(notes notes_info.cpp)
-# target_link_libraries(notes syntacts)
-# target_link_libraries(notes mahi::util)
-# target_link_libraries(notes mahi::gui)
+# create an executable from majmin_ampdur.cpp and link it to wanted libraries
+add_executable(exp1 majmin_ampdur.cpp)
+target_link_libraries(exp1 syntacts)
+target_link_libraries(exp1 mahi::util)
+target_link_libraries(exp1 mahi::gui)
