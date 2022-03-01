@@ -278,7 +278,7 @@ void transScreen1() // introduction to the entire session, then specifically tra
 
         if (ImGui::Button("Begin Next Experiment",buttonSizeBegin)){
             // Go to next screen
-            screen_name = "trial_screen";
+            screen_name = "trial_screen1";
             // likely where I will be determining the base cue, trial number makes sense to code here
             sus = susChosen;
             currentChordNum = baseChordList[trial_num];
@@ -326,7 +326,7 @@ void transScreen1() // introduction to the entire session, then specifically tra
 
         if (ImGui::Button("Begin Next Experiment",buttonSizeBegin)){
             // Go to next screen
-            screen_name = "trial_screen";
+            screen_name = "trial_screen2";
             // likely where I will be determining the base cue, trial number makes sense to code here
             sus = susChosen;
             currentChordNum = baseChordList[trial_num];
