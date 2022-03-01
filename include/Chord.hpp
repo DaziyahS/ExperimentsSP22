@@ -13,7 +13,6 @@ struct Chord
     public:
         // declare the constructor for the chord (and default values)
         Chord(std::string name = "d_minor_n3", int duration = 0, int amplitude = 0, bool isSimultaneous = false);
-        // defined a default chord because need for when I generically declare it
         
         // declare public variables
         std::string name_; // name of the note
