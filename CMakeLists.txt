@@ -36,3 +36,6 @@ add_executable(exp1 majmin_ampdur.cpp)
 target_link_libraries(exp1 syntacts)
 target_link_libraries(exp1 mahi::util)
 target_link_libraries(exp1 mahi::gui)
+
+# Also makes sure to read from test/CMakeLists.txt
+add_subdirectory(test)
