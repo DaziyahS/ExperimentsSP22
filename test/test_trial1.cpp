@@ -87,9 +87,10 @@ private:
                 return true;
             }
     // Define the variables for the SAMs
-    GLuint valSAMs[5]; // valence
-    GLuint arousSAMs[5]; // arousal
-    std::string iconValues[5] = {"neg2", "neg1", "0", "1", "2"};
+    GLuint susGraphs[3]; // sustain graphs
+    GLuint ampGraphs[4]; // amplitude graphs
+    GLuint ASFaces[4]; // affective slider faces
+    std::string iconValues[4] = {"1", "2", "3", "4"};
     
 public:
     // this is a constructor. It initializes your class to a specific state
@@ -110,11 +111,17 @@ public:
         currentChord = chordNew.signal_list[14];
 
         // create the icons
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 3; i++)
         {
-            loadIcon(("../../Figures/arous_" + iconValues[i] + ".png").c_str(), &arousSAMs[i]);
-            loadIcon(("../../Figures/val_" + iconValues[i] + ".png").c_str(), &valSAMs[i]);
+            loadIcon(("../../Figures/time" + iconValues[i] + ".png").c_str(), &susGraphs[i]);
         }
+        for (int i = 0; i < 4; i++){
+            loadIcon(("../../Figures/val_" + iconValues[i] + ".png").c_str(), &ampGraphs[i]);
+        }
+        loadIcon("../../Figures/AS_sleepy_alt.png", &ASFaces[0]);
+        loadIcon("../../Figures/AS_wideawake.png", &ASFaces[1]);
+        loadIcon("../../Figures/AS_unhappy.png", &ASFaces[2]);
+        loadIcon("../../Figures/AS_happy.png", &ASFaces[3]);
      }
 
    // Define variables needed throughout the program
@@ -193,142 +200,9 @@ void trialScreen1();
     
     if (count < experiment_num){
         if (!dontPlay){
-            
+            // do nothing
         }
         else {
             ImGui::Text("Valence");
             
-            for (int i = 0; i < 10; i++)
-            {
-                if (i < 5)
-                {    
-                    if (i > 0)
-                    {
-                        ImGui::SameLine();
-                    }
-                    ImGui::PushID(i);
-                        if (pressed == i){
-                            ImGui::PushStyleColor(ImGuiCol_Button,ImVec4(1.0f, 1.0f, 0.0f, 1.0f));
-                        }
-                        else
-                            ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(1 / 7.0f, 0.3f, 0.3f));
-                    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(2 / 7.0f, 0.6f, 0.6f));
-                    ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(5 / 7.0f, 0.9f, 0.9f));
-                    if(ImGui::ImageButton((void *)(intptr_t)valSAMs[i],buttonSizeSAMs, ImVec2(0,0), ImVec2(1,1), 5))
-                    {
-                        pressed = i;
-                        val = pressed - 2;
-                    };
-                }
-                else
-                {
-                    if (i > 5)
-                    {
-                        ImGui::SameLine();
-                    }
-                    else
-                    {
-                        ImGui::Text("Arousal");
-                    }
-                    ImGui::PushID(i);
-                        if (pressed2 == i){
-                            ImGui::PushStyleColor(ImGuiCol_Button,ImVec4(1.0f, 1.0f, 0.0f, 1.0f));
-                        }
-                        else
-                            ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(1 / 7.0f, 0.3f, 0.3f));
-                    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(2 / 7.0f, 0.6f, 0.6f));
-                    ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(5 / 7.0f, 0.9f, 0.9f));
-                    if(ImGui::ImageButton((void *)(intptr_t)arousSAMs[i-5],buttonSizeSAMs, ImVec2(0,0), ImVec2(1,1), 5))
-                    {
-                        pressed2 = i;
-                        arous = pressed2 - 7;
-                    };  
-                }
-                ImGui::PopStyleColor(3);
-                ImGui::PopID();
-            }
-            
-            ImGui::NewLine();
-            ImGui::NewLine();
-            ImGui::SameLine(205);
-            // Go to next cue
-            if(ImGui::Button("Next",buttonSizeTrial)){
-                // Record the answers
-                if (pressed > 0 && pressed2 > 0)
-                {
-                    // timestamp information**********
-                    timeRespond = trial_clock.get_elapsed_time().as_seconds(); // get response time
-                    // put in the excel sheet
-                    file_name << count << ","; // track trial
-                    file_name << currentChordNum << "," << sus << "," << amp << "," << isSim << "," << chordNew.getMajor() << ","; // gathers experimental paramaters
-                    file_name << val << "," << arous << "," << timeRespond << std::endl; // gathers experimental input
-
-                    // reset values for drop down list
-                    pressed = -1;
-                    pressed2 = -1;
-
-                    // shuffle the amplitude list if needed
-                    int cue_num = count % 4;
-                    if (cue_num == 3){
-                        std::shuffle(std::begin(list), std::end(list), rng);            
-                    }
-                    // increase the list number
-                    count++;
-                    dontPlay = false;
-                    
-                    if(count < experiment_num) // if not final trial
-                    {
-                        // Play the next cue for listening purposes
-                        // determine which part of the list should be used
-                        cue_num = count%4;
-                        // determine what is the amp
-                        amp = list[cue_num];
-                        // create the cue
-                        chordNew = Chord(currentChord, sus, amp, isSim);
-                        // determine the values for each channel
-                        channelSignals = chordNew.playValues();
-                        // play_trial(cue_num);
-                        s.play(leftTact, channelSignals[0]);
-                        s.play(botTact, channelSignals[1]); 
-                        s.play(rightTact, channelSignals[2]); 
-
-                        // reset the play time clock 
-                        play_clock.restart();
-                        // allow for the play time to be measured and pause to be enabled
-                        playTime = true;      
-                    }   
-                }
-                else
-                {
-                    ImGui::OpenPopup("Error");
-                }
-            }
-            if(ImGui::BeginPopup("Error")){
-                ImGui::Text("Please make both a valence and arousal selection before continuing.");
-                if(ImGui::Button("Close"))
-                {
-                    ImGui::CloseCurrentPopup();
-                }
-            }
-        }
-        // Dictate how long the signal plays
-        if (playTime)
-        {   
-            // Let the user know that they should feel something
-            ImGui::Text("The cue is currently playing.");
-            int cue_num = count % 4;
-            // if the signal time has passed, stop the signal on all channels
-            if(play_clock.get_elapsed_time().as_seconds() > channelSignals[0].length()){ // if whole signal is played
-                    s.stopAll();
-                    playTime = false; // do not reopen this until Play is pressed again
-                    trial_clock.restart(); // start recording the response time
-                    // Don't allow the user to press play again
-                    dontPlay = true;
-                }
-        }
-    }
-    else // if trials are done
-    {
-            cout << "done" << endl;
-    }        
-}
+           
