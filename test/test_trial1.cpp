@@ -157,7 +157,7 @@ public:
     std::vector<int> listSus = {0, 1, 2};
     // The base parameters for my chords
     std::vector<int> chordList = {0, 1, 2, 3, 4, 5, 6, 7}; // for all chords
-    std::vector<int> baseChordList; // to determine the chords list for the next screen
+    std::vector<int> baseChordList = chordList; // to determine the chords list for the next screen
     // Vector for if play can be pressed
     bool dontPlay = false;
     bool first_in_trial = true;
@@ -177,11 +177,12 @@ public:
 
     }   
 
-void trialScreen1();
+void trialScreen1()
 {
  // Set up the paramaters
     // Define the base cue paramaters
-    currentChord = chordNew.signal_list[currentChordNum];
+    amp = 0; // full amplitude
+    sus = 1; // mid sustain
 
     // internal trial tracker
     static int count = 0;
@@ -189,20 +190,25 @@ void trialScreen1();
     static auto rng = std::default_random_engine {};
 
     if (first_in_trial){
-        list = chordList;
+        baseChordList = chordList;
         // initial randomization
-        std::shuffle(std::begin(list), std::end(list), rng);
+        std::shuffle(std::begin(baseChordList), std::end(baseChordList), rng);
         // counter for trial starts at 0 in beginning
         count = 0;
         // set first_in_trial to false so initial randomization can happen once
         first_in_trial = false;
     }
     
-    if (count < experiment_num){
+    if (count < experiment_num1){
         if (!dontPlay){
             // do nothing
         }
         else {
-            ImGui::Text("Valence");
-            
+            // play cue
+            // say cue is playing
+            // highlight major or minor
+        }
+    }
+}
+
            
