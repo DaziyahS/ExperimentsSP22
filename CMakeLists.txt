@@ -32,7 +32,7 @@ FetchContent_MakeAvailable(syntacts)
 # target_link_libraries(myApp mahi::gui)
 
 # create an executable from majmin_ampdur.cpp and link it to wanted libraries
-add_executable(exp1 majmin_ampdur.cpp)
+add_executable(exp1 src/majmin_ampdur.cpp)
 target_link_libraries(exp1 syntacts)
 target_link_libraries(exp1 mahi::util)
 target_link_libraries(exp1 mahi::gui)
