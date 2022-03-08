@@ -222,8 +222,7 @@ void trialScreen1(){
             
             if(ImGui::Button("Play",buttonSizeTrial)){
                 // Record the answers
-                if (majPress > 0)
-                {
+                if (majPress > 0) {
                     // timestamp information**********
                     timeRespond = trial_clock.get_elapsed_time().as_seconds(); // get response time
                     // // put in the excel sheet
@@ -278,22 +277,18 @@ void trialScreen1(){
                 }
             }
         }
-            if(playTime){   
-                // Let the user know that they should feel something
-                ImGui::Text("The cue is currently playing.");
-                int cue_num = count % 8;
-                // if the signal time has passed, stop the signal on all channels
-                if(play_clock.get_elapsed_time().as_seconds() > channelSignals[0].length()){ // if whole signal is played
-                        s.stopAll();
-                        playTime = false; // do not reopen this until Play is pressed again
-                        trial_clock.restart(); // start recording the response time
-                        // Don't allow the user to press play again
-                        dontPlay = true;
-                    }
-            }
-            // play cue
-            // say cue is playing
-            // highlight major or minor
+        if(playTime){   
+            // Let the user know that they should feel something
+            ImGui::Text("The cue is currently playing.");
+            int cue_num = count % 8;
+            // if the signal time has passed, stop the signal on all channels
+            if(play_clock.get_elapsed_time().as_seconds() > channelSignals[0].length()){ // if whole signal is played
+                    s.stopAll();
+                    playTime = false; // do not reopen this until Play is pressed again
+                    trial_clock.restart(); // start recording the response time
+                    // Don't allow the user to press play again
+                    dontPlay = true;
+                }
         }
     }
     else // if trials are done
@@ -301,4 +296,5 @@ void trialScreen1(){
         screen_name = "end_screen";
         file_name.close();
     }      
-}  
+} 
+} 
