@@ -133,6 +133,9 @@ public:
     bool isSim = false; // default is sequential
     int amp, sus;
     // to determine state of image selection
+    int majPress = -1; // major/minor buttons
+    int ampPress = -1; // amplitude buttons
+    int durPress = -1; // duration buttons
     int pressed = -1; // valence
     int pressed2 = -1; // arousal
     // block 1
@@ -144,6 +147,9 @@ public:
     int corr_train_num2 = 40; // amount of trials in corrective training session
     int experiment_num2 = 40; // amount of trials in experiment
     int val = 0, arous = 0; // initialize val&arous values
+    int maj = -1; // major value, 0 is major 1 is minor 
+    int dur = 0; // duration value chosen
+    int ampl = 0; // amplitude value chosen
     int final_block_num = 6; // number of blocks total
     // For playing the signal
     Clock play_clock; // keeping track of time for non-blocking pauses
@@ -177,8 +183,7 @@ public:
 
     }   
 
-void trialScreen1()
-{
+void trialScreen1(){
  // Set up the paramaters
     // Define the base cue paramaters
     amp = 0; // full amplitude
@@ -204,11 +209,96 @@ void trialScreen1()
             // do nothing
         }
         else {
+            ImGui::Text("Valence");
+            
+            if(ImGui::Button("Major")){
+                majPress = 1;
+                maj = 0;
+            }
+            if(ImGui::Button("Minor")){
+                majPress = 2;
+                maj = 1;
+            }
+            
+            if(ImGui::Button("Play",buttonSizeTrial)){
+                // Record the answers
+                if (majPress > 0)
+                {
+                    // timestamp information**********
+                    timeRespond = trial_clock.get_elapsed_time().as_seconds(); // get response time
+                    // // put in the excel sheet
+                    // file_name << count << ","; // track trial
+                    // file_name << currentChordNum << "," << sus << "," << amp << "," << chordNew.getMajor() << ","; // gathers experimental paramaters
+                    // file_name << maj << "," << timeRespond << std::endl; // gathers experimental input
+
+                    // reset values for drop down list
+                    majPress = -1;
+
+                    // shuffle the chord list if needed
+                    int cue_num = count % 8;
+                    if (cue_num == 7){
+                        std::shuffle(std::begin(baseChordList), std::end(baseChordList), rng);            
+                    }
+                    // increase the list number
+                    count++;
+                    dontPlay = false;
+                    
+                    if(count < experiment_num1) // if not final trial
+                    {
+                        // Play the next cue for listening purposes
+                        // determine which part of the list should be used
+                        cue_num = count%8;
+                        // determine what is the amp
+                        currentChord = baseChordList[cue_num];
+                        // create the cue
+                        chordNew = Chord(currentChord, sus, amp, isSim);
+                        // determine the values for each channel
+                        channelSignals = chordNew.playValues();
+                        // play_trial(cue_num);
+                        s.play(leftTact, channelSignals[0]);
+                        s.play(botTact, channelSignals[1]); 
+                        s.play(rightTact, channelSignals[2]); 
+
+                        // reset the play time clock 
+                        play_clock.restart();
+                        // allow for the play time to be measured and pause to be enabled
+                        playTime = true;      
+                    }   
+                }
+                else
+                {
+                    ImGui::OpenPopup("Error");
+                }
+            }
+            if(ImGui::BeginPopup("Error")){
+                ImGui::Text("Please make both a valence and arousal selection before continuing.");
+                if(ImGui::Button("Close"))
+                {
+                    ImGui::CloseCurrentPopup();
+                }
+            }
+        }
+            if(playTime){   
+                // Let the user know that they should feel something
+                ImGui::Text("The cue is currently playing.");
+                int cue_num = count % 8;
+                // if the signal time has passed, stop the signal on all channels
+                if(play_clock.get_elapsed_time().as_seconds() > channelSignals[0].length()){ // if whole signal is played
+                        s.stopAll();
+                        playTime = false; // do not reopen this until Play is pressed again
+                        trial_clock.restart(); // start recording the response time
+                        // Don't allow the user to press play again
+                        dontPlay = true;
+                    }
+            }
             // play cue
             // say cue is playing
             // highlight major or minor
         }
     }
-}
-
-           
+    else // if trials are done
+    {
+        screen_name = "end_screen";
+        file_name.close();
+    }      
+}  
