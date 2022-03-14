@@ -11,6 +11,7 @@
 // local includes
 #include <Chord.hpp>
 #include <Note.hpp> 
+#include <stb_image.h>
 
 // open the namespaces that are relevant for this code
 using namespace mahi::gui;

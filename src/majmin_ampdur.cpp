@@ -11,6 +11,7 @@
 // local includes
 #include <Chord.hpp>
 #include <Note.hpp> 
+#include <stb_image.h>
 
 // open the namespaces that are relevant for this code
 using namespace mahi::gui;
@@ -115,7 +116,7 @@ public:
             loadIcon(("../../Figures/arous_" + iconValues[i] + ".png").c_str(), &arousSAMs[i]);
             loadIcon(("../../Figures/val_" + iconValues[i] + ".png").c_str(), &valSAMs[i]);
         }
-     }
+    }
 
    // Define variables needed throughout the program
     ImGuiWindowFlags flags;
@@ -305,7 +306,7 @@ void transScreen1() // introduction to the entire session, then specifically tra
             playTime = true;
             }
         }
-    elseif(exp_num == 2) // amp/sus identification AND emotion
+    if(exp_num == 2) // amp/sus identification AND emotion
     {
         // Write message for person
         ImGui::Text("During the following experiment, you will receive a haptic cue and be asked");
@@ -353,4 +354,12 @@ void transScreen1() // introduction to the entire session, then specifically tra
             playTime = true;
         }
     }
+}
+
+};
+
+int main(){
+    MyGui my_gui;
+    my_gui.run();
+    return 0;
 }
