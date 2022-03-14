@@ -31,11 +31,17 @@ FetchContent_MakeAvailable(syntacts)
 # target_link_libraries(myApp mahi::util)
 # target_link_libraries(myApp mahi::gui)
 
-# create an executable from majmin_ampdur.cpp and link it to wanted libraries
-add_executable(exp1 src/majmin_ampdur.cpp)
-target_link_libraries(exp1 syntacts)
-target_link_libraries(exp1 mahi::util)
-target_link_libraries(exp1 mahi::gui)
+# # create an executable from majmin_ampdur.cpp and link it to wanted libraries
+# add_executable(exp1 src/majmin_ampdur.cpp)
+# target_link_libraries(exp1 syntacts)
+# target_link_libraries(exp1 mahi::util)
+# target_link_libraries(exp1 mahi::gui)
 
-# Also makes sure to read from test/CMakeLists.txt
-add_subdirectory(test)
+# # Also makes sure to read from test/CMakeLists.txt
+# add_subdirectory(test)
+
+# create test executable and link it to needed libraries
+add_executable(test_trial1 test/test_trial1.cpp src/Chord.cpp src/Note.cpp)
+target_link_libraries(test_trial1 syntacts)
+target_link_libraries(test_trial1 mahi::util)
+target_link_libraries(test_trial1 mahi::gui)

@@ -23,16 +23,16 @@ Note::Note(int name, double amplitude, tact::Signal envelope) :
             signal_ = tact::Sine(d_snote3);
             break;
         case 3:
-            signal_ = tact::Sine(e_note3) * 2/3;
+            signal_ = tact::Sine(e_note3) * tact::Envelope(6, 2/3);
             break;
         case 4:
-            signal_ = tact::Sine(f_note3) * 1/2;
+            signal_ = tact::Sine(f_note3) * tact::Envelope(6, 1/2);
             break;
         case 5:
-            signal_ = tact::Sine(f_snote3) * 2/3;
+            signal_ = tact::Sine(f_snote3) * tact::Envelope(6, 2/3);
             break;
         case 6:
-            signal_ = tact::Sine(g_note3)*8/9;
+            signal_ = tact::Sine(g_note3) * tact::Envelope(6, 8/9);
             break;
         case 7:
             signal_ = tact::Sine(g_snote3);

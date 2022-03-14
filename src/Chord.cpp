@@ -191,27 +191,6 @@ std::vector<tact::Signal> Chord::playValues()
     channel_sigs = {channel1_sig, channel2_sig, channel3_sig};
     return channel_sigs;
 }
-std::vector<tact::Signal> Chord::playValuesMod()
-{
-    createNotes(); // recreate the current note
-    std::vector<tact::Signal> channel_sigs;
-    if(isSimultaneous_)
-    {
-        channel1_sig = notesMod_[0].getSignal();
-        channel2_sig = notesMod_[1].getSignal();
-        channel3_sig = notesMod_[2].getSignal();
-    }
-    else
-    {
-        finalSignal = notesMod_[0].getSignal() << notesMod_[1].getSignal() << notesMod_[2].getSignal();
-        channel1_sig = finalSignal;
-        channel2_sig = finalSignal;
-        channel3_sig = finalSignal;
-    }
-    // what's the final vector
-    channel_sigs = {channel1_sig, channel2_sig, channel3_sig};
-    return channel_sigs;
-}
 
 // find out if it is a major chord
 bool Chord::getMajor()
